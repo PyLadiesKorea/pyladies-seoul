@@ -166,13 +166,13 @@ CODE_OF_CONDUCT: Dict[str, str] = {
     "contact_content_ko": (
         "누군가가 행동 강령을 위반하고 있다고 생각되거나 다른 우려 사항이 있다면, "
         "즉시 PyLadies 행동 강령 작업 그룹의 구성원에게 연락하십시오. "
-        "coc@pyladies.com으로 이메일을 보내실 수 있습니다."
+        "seoul@pyladies.com으로 이메일을 보내실 수 있습니다."
     ),
     "contact_content_en": (
         "If you believe that someone is violating the code of conduct, or have "
         "any other concerns, please contact a member of the PyLadies Code of "
         "Conduct working group immediately. They can be reached by emailing "
-        "coc@pyladies.com."
+        "seoul@pyladies.com."
     ),
     "source_ko": "이 행동 강령은 Python Software Foundation에서 수정되었습니다.",
     "source_en": ("This Code of Conduct has been adapted from the Python Software " "Foundation."),
@@ -180,7 +180,7 @@ CODE_OF_CONDUCT: Dict[str, str] = {
     "license_en": ("Creative Commons Attribution-ShareAlike 3.0 Unported License"),
     "psf_url": "https://www.python.org/psf/conduct/",
     "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
-    "pyladies_coc_email": "coc@pyladies.com",
+    "pyladies_coc_email": "seoul@pyladies.com",
 }
 
 
