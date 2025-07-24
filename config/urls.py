@@ -29,7 +29,7 @@ urlpatterns: list[Any] = [
 
 urlpatterns.extend(
     i18n_patterns(
-        path("admin/", admin.site.urls),
+        path("organizer/", admin.site.urls),
         path("", include("main.urls")),
     )
 )

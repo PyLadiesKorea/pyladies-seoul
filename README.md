@@ -112,16 +112,54 @@ PyLadies Seoul은 한국의 여성 Python 사용자를 위한 커뮤니티입니
 
 8. **브라우저에서 확인**
    - 메인 사이트: http://127.0.0.1:8000/
-   - 관리자 페이지: http://127.0.0.1:8000/admin/
 
 ### Docker를 사용한 실행
 
-```bash
-# Docker Compose로 실행
-docker-compose up -d
+#### 개발 환경 (Django runserver 사용)
 
-# 또는 Docker만 사용
+1. **Docker Compose로 개발 환경 실행**
+   ```bash
+   # 백그라운드에서 실행
+   docker-compose up -d
+
+   # 로그 확인
+   docker-compose logs -f
+
+   # 서비스 중지
+   docker-compose down
+   ```
+
+2. **데이터베이스 마이그레이션 (최초 실행 시)**
+   ```bash
+   # 컨테이너가 실행 중일 때
+   docker-compose exec web uv run python manage.py migrate
+   docker-compose exec web uv run python manage.py createsuperuser
+   ```
+
+3. **브라우저에서 확인**
+   - 메인 사이트: http://localhost:8000/
+   - 관리자 페이지: http://localhost:8000/organizer/
+
+#### 프로덕션 환경 (Gunicorn + Nginx 사용)
+
+1. **환경 변수 설정**
+   ```bash
+   # .env.example을 .env로 복사하고 값 수정
+   cp .env.example .env
+   ```
+
+2. **프로덕션 환경 실행**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+#### Docker 단독 사용
+
+```bash
+# 이미지 빌드
 docker build -t pyladies-seoul .
+
+# 컨테이너 실행
 docker run -p 8000:8000 pyladies-seoul
 ```
 
