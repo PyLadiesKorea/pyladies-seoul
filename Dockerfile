@@ -13,6 +13,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        nodejs \
+        npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
@@ -29,6 +31,16 @@ COPY . .
 
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
+
+# Create staticfiles directory and set permissions
+RUN mkdir -p /app/staticfiles && chmod 755 /app/staticfiles
+
+# Build CSS
+WORKDIR /app/theme/static_src
+RUN npm install && npm run build
+
+# Switch back to app directory
+WORKDIR /app
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app

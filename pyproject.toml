@@ -35,6 +35,7 @@ dependencies = [
     "django-htmx>=1.23.0",
     "pillow>=11.0.0",
     "python-dotenv>=1.1.0",
+    "cookiecutter>=2.6.0",
 ]
 
 [project.optional-dependencies]
