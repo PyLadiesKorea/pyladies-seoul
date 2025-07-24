@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+import os
 from typing import Any
 
 from django.conf import settings
@@ -29,7 +30,7 @@ urlpatterns: list[Any] = [
 
 urlpatterns.extend(
     i18n_patterns(
-        path("organizer/", admin.site.urls),
+        path(f"{os.getenv('ADMIN_URL', 'admin')}/", admin.site.urls),
         path("", include("main.urls")),
     )
 )
