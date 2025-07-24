@@ -1,0 +1,497 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-24 22:45+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: main/admin.py:143
+msgid "표시 설정"
+msgstr "표시 설정"
+
+#: main/admin.py:171
+msgid "설명"
+msgstr "설명"
+
+#: main/admin.py:173
+msgid "요구사항"
+msgstr "요구사항"
+
+#: main/admin.py:180
+msgid "연락 방법"
+msgstr "연락 방법"
+
+#: main/admin.py:183
+msgid "설정"
+msgstr "설정"
+
+#: main/models.py:11
+msgid "세미나"
+msgstr "세미나"
+
+#: main/models.py:12
+msgid "워크숍"
+msgstr "워크숍"
+
+#: main/models.py:13
+msgid "밋업"
+msgstr "밋업"
+
+#: main/models.py:14
+msgid "네트워킹"
+msgstr "네트워킹"
+
+#: main/models.py:15
+msgid "스터디그룹"
+msgstr "스터디그룹"
+
+#: main/models.py:24 main/models.py:442
+msgid "제목 (한국어)"
+msgstr "제목 (한국어)"
+
+#: main/models.py:29 main/models.py:447
+msgid "제목 (영어)"
+msgstr "제목 (영어)"
+
+#: main/models.py:33 main/models.py:451
+msgid "설명 (한국어)"
+msgstr "설명 (한국어)"
+
+#: main/models.py:37 main/models.py:455
+msgid "설명 (영어)"
+msgstr "설명 (영어)"
+
+#: main/models.py:44
+msgid "활동 유형"
+msgstr "활동 유형"
+
+#: main/models.py:52
+msgid "시작 일시"
+msgstr "시작 일시"
+
+#: main/models.py:58
+msgid "종료 일시"
+msgstr "종료 일시"
+
+#: main/models.py:64
+msgid "장소명 (한국어)"
+msgstr "장소명 (한국어)"
+
+#: main/models.py:70
+msgid "장소명 (영어)"
+msgstr "장소명 (영어)"
+
+#: main/models.py:76
+msgid "장소 주소"
+msgstr "장소 주소"
+
+#: main/models.py:81
+msgid "장소 URL"
+msgstr "장소 URL"
+
+#: main/models.py:90
+msgid "정기 모임 일정 (한국어)"
+msgstr "정기 모임 일정 (한국어)"
+
+#: main/models.py:92
+msgid "예: 매주 화요일 오후 7시"
+msgstr "예: 매주 화요일 오후 7시"
+
+#: main/models.py:98
+msgid "정기 모임 일정 (영어)"
+msgstr "정기 모임 일정 (영어)"
+
+#: main/models.py:100
+msgid "예: Every Tuesday 7PM"
+msgstr "예: Every Tuesday 7PM"
+
+#: main/models.py:104 main/models.py:484
+msgid "모집 중"
+msgstr "모집 중"
+
+#: main/models.py:113
+msgid "대표 이미지"
+msgstr "대표 이미지"
+
+#: main/models.py:118 main/models.py:235 main/models.py:291 main/models.py:489
+msgid "공개 여부"
+msgstr "공개 여부"
+
+#: main/models.py:123
+msgid "추천 활동"
+msgstr "추천 활동"
+
+#: main/models.py:131
+msgid "발행된 플랫폼"
+msgstr "발행된 플랫폼"
+
+#: main/models.py:136 main/models.py:137 main/models.py:253 main/models.py:384
+msgid "활동"
+msgstr "활동"
+
+#: main/models.py:177
+msgid "이름 (한국어)"
+msgstr "이름 (한국어)"
+
+#: main/models.py:182
+msgid "이름 (영어)"
+msgstr "이름 (영어)"
+
+#: main/models.py:187
+msgid "역할 (한국어)"
+msgstr "역할 (한국어)"
+
+#: main/models.py:192
+msgid "역할 (영어)"
+msgstr "역할 (영어)"
+
+#: main/models.py:197
+msgid "소개 (한국어)"
+msgstr "소개 (한국어)"
+
+#: main/models.py:202
+msgid "소개 (영어)"
+msgstr "소개 (영어)"
+
+#: main/models.py:209
+msgid "프로필 사진"
+msgstr "프로필 사진"
+
+#: main/models.py:214
+msgid "이메일"
+msgstr "이메일"
+
+#: main/models.py:219
+msgid "GitHub URL"
+msgstr "GitHub URL"
+
+#: main/models.py:224
+msgid "LinkedIn URL"
+msgstr "LinkedIn URL"
+
+#: main/models.py:229 main/models.py:231 main/models.py:285 main/models.py:287
+#: main/models.py:355 main/models.py:357 main/models.py:478 main/models.py:480
+msgid "표시 순서"
+msgstr "표시 순서"
+
+#: main/models.py:241 main/models.py:242
+msgid "오거나이저"
+msgstr "오거나이저"
+
+#: main/models.py:251
+msgid "일반"
+msgstr "일반"
+
+#: main/models.py:252
+msgid "참여"
+msgstr "참여"
+
+#: main/models.py:254
+msgid "기술"
+msgstr "기술"
+
+#: main/models.py:255
+msgid "연락처"
+msgstr "연락처"
+
+#: main/models.py:262
+msgid "카테고리"
+msgstr "카테고리"
+
+#: main/models.py:267
+msgid "질문 (한국어)"
+msgstr "질문 (한국어)"
+
+#: main/models.py:272
+msgid "질문 (영어)"
+msgstr "질문 (영어)"
+
+#: main/models.py:276
+msgid "답변 (한국어)"
+msgstr "답변 (한국어)"
+
+#: main/models.py:280
+msgid "답변 (영어)"
+msgstr "답변 (영어)"
+
+#: main/models.py:297 main/models.py:298
+msgid "FAQ"
+msgstr "FAQ"
+
+#: main/models.py:306
+msgid "메인 채널"
+msgstr "메인 채널"
+
+#: main/models.py:307
+msgid "발행 플랫폼"
+msgstr "발행 플랫폼"
+
+#: main/models.py:320
+msgid "플랫폼명 (한국어)"
+msgstr "플랫폼명 (한국어)"
+
+#: main/models.py:325
+msgid "플랫폼명 (영어)"
+msgstr "플랫폼명 (영어)"
+
+#: main/models.py:329
+msgid "URL"
+msgstr "URL"
+
+#: main/models.py:336
+msgid "링크 유형"
+msgstr "링크 유형"
+
+#: main/models.py:343
+msgid "아이콘"
+msgstr "아이콘"
+
+#: main/models.py:349
+msgid "아이콘 CSS 클래스"
+msgstr "아이콘 CSS 클래스"
+
+#: main/models.py:351
+msgid "예: fab fa-discord, fab fa-github"
+msgstr "예: fab fa-discord, fab fa-github"
+
+#: main/models.py:361
+msgid "활성 상태"
+msgstr "활성 상태"
+
+#: main/models.py:367 main/models.py:368
+msgid "소셜 미디어 플랫폼"
+msgstr "소셜 미디어 플랫폼"
+
+#: main/models.py:390
+msgid "플랫폼"
+msgstr "플랫폼"
+
+#: main/models.py:395
+msgid "게시물 URL"
+msgstr "게시물 URL"
+
+#: main/models.py:401
+msgid "게시 일시"
+msgstr "게시 일시"
+
+#: main/models.py:407 main/models.py:408
+msgid "활동 게시물"
+msgstr "활동 게시물"
+
+#: main/models.py:425
+msgid "메이커"
+msgstr "메이커"
+
+#: main/models.py:426
+msgid "스피커"
+msgstr "스피커"
+
+#: main/models.py:427
+msgid "스터디 리더"
+msgstr "스터디 리더"
+
+#: main/models.py:428
+msgid "스폰서"
+msgstr "스폰서"
+
+#: main/models.py:429
+msgid "봉사자"
+msgstr "봉사자"
+
+#: main/models.py:430
+msgid "기부"
+msgstr "기부"
+
+#: main/models.py:431
+msgid "기타"
+msgstr "기타"
+
+#: main/models.py:437
+msgid "기여 유형"
+msgstr "기여 유형"
+
+#: main/models.py:460
+msgid "요구사항 (한국어)"
+msgstr "요구사항 (한국어)"
+
+#: main/models.py:465
+msgid "요구사항 (영어)"
+msgstr "요구사항 (영어)"
+
+#: main/models.py:469
+msgid "연락 방법 (한국어)"
+msgstr "연락 방법 (한국어)"
+
+#: main/models.py:473
+msgid "연락 방법 (영어)"
+msgstr "연락 방법 (영어)"
+
+#: main/models.py:495 main/models.py:496
+msgid "기여 기회"
+msgstr "기여 기회"
+
+#: templates/coc.html:6 templates/coc.html:17
+msgid "행동 강령"
+msgstr "행동 강령"
+
+#: templates/coc.html:8
+msgid ""
+"PyLadies Seoul 행동 강령 - 모든 사람을 위한 존중하고 괴롭힘 없는 커뮤니티"
+msgstr ""
+"PyLadies Seoul 행동 강령 - 모든 사람을 위한 존중하고 괴롭힘 없는 커뮤니티"
+
+#: templates/coc.html:23
+msgid "모든 사람을 위한 존중하고 괴롭힘 없는 커뮤니티를 만들어갑니다"
+msgstr "모든 사람을 위한 존중하고 괴롭힘 없는 커뮤니티를 만들어갑니다"
+
+#: templates/coc.html:39
+msgid "모든 구성원이 안전하고 존중받는 환경을 만들어갑니다"
+msgstr "모든 구성원이 안전하고 존중받는 환경을 만들어갑니다"
+
+#: templates/coc.html:120
+msgid "출처 및 라이선스"
+msgstr "출처 및 라이선스"
+
+#: templates/coc.html:129
+msgid "라이선스"
+msgstr "라이선스"
+
+#: templates/components/contact_section.html:19
+#: templates/components/cta_section.html:30
+msgid ""
+"The fastest way to communicate. Ask questions and get answers in real time."
+msgstr ""
+
+#: templates/components/contact_section.html:19
+msgid "💬 Join Discord"
+msgstr ""
+
+#: templates/components/contact_section.html:20
+#: templates/components/cta_section.html:31
+msgid "Email"
+msgstr ""
+
+#: templates/components/contact_section.html:20
+#: templates/components/cta_section.html:31
+msgid "Please send official proposals or collaboration inquiries via email."
+msgstr ""
+
+#: templates/components/contact_section.html:20
+msgid "📧 Send Email"
+msgstr ""
+
+#: templates/components/cta_section.html:30
+msgid "Join Discord"
+msgstr ""
+
+#: templates/components/cta_section.html:31
+msgid "Send Email"
+msgstr ""
+
+#: templates/components/event_card.html:22
+msgid "Featured"
+msgstr ""
+
+#: templates/components/event_card.html:25
+msgid "Recruiting"
+msgstr ""
+
+#: templates/event_detail.html:241
+msgid "Event Participation & Inquiry"
+msgstr ""
+
+#: templates/event_detail.html:241
+msgid ""
+"If you want to participate in the event or have any questions, feel free to "
+"contact us anytime!"
+msgstr ""
+
+#: templates/events_list.html:43
+msgid "No events have been registered yet"
+msgstr ""
+
+#: templates/events_list.html:43
+msgid "New events will be announced soon."
+msgstr ""
+
+#: templates/events_list.html:53 templates/index.html:156
+msgid "Join PyLadies Seoul!"
+msgstr ""
+
+#: templates/events_list.html:53
+msgid ""
+"Join various events and activities in our community to grow together and "
+"find networking opportunities."
+msgstr ""
+
+#: templates/index.html:20
+msgid "Discord 참여하기,Join Discord"
+msgstr ""
+
+#: templates/index.html:21
+msgid "기여하기,Contribute"
+msgstr ""
+
+#: templates/index.html:154
+msgid "PyLadies Seoul에 참여하세요!"
+msgstr ""
+
+#: templates/index.html:154
+msgid "함께 성장하고 네트워킹할 수 있는 기회를 놓치지 마세요."
+msgstr ""
+
+#: templates/index.html:156
+msgid "Don't miss the opportunity to grow and network together."
+msgstr ""
+
+#~ msgid "추천"
+#~ msgstr "추천"
+
+#~ msgid "이벤트 정보"
+#~ msgstr "이벤트 정보"
+
+#~ msgid "일시"
+#~ msgstr "일시"
+
+#~ msgid "등록일"
+#~ msgstr "등록일"
+
+#~ msgid "장소"
+#~ msgstr "장소"
+
+#~ msgid "링크 바로가기"
+#~ msgstr "링크 바로가기"
+
+#~ msgid "정기 모임"
+#~ msgstr "정기 모임"
+
+#~ msgid "기타 정보"
+#~ msgstr "기타 정보"
+
+#~ msgid "최종 수정"
+#~ msgstr "최종 수정"
+
+#~ msgid "이벤트 ID"
+#~ msgstr "이벤트 ID"
+
+#~ msgid "관련 이벤트"
+#~ msgstr "관련 이벤트"
+
+#~ msgid "비슷한 유형의 다른 이벤트들을 확인해보세요"
+#~ msgstr "비슷한 유형의 다른 이벤트들을 확인해보세요"
+
+#~ msgid "모든 이벤트 보기"
+#~ msgstr "모든 이벤트 보기"

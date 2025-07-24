@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Events | PyLadies Seoul{% endblock %}
+{% get_current_language as LANGUAGE_CODE %}
 
-{% block description %}PyLadies Seoul 이벤트 및 활동 - 세미나, 워크숍, 네트워킹 등 다양한 프로그램{% endblock %}
+{% block title %}{% if LANGUAGE_CODE == 'ko' %}이벤트{% else %}Events{% endif %} | PyLadies Seoul{% endblock %}
+
+{% block description %}{% if LANGUAGE_CODE == 'ko' %}PyLadies Seoul 이벤트 및 활동 - 세미나, 워크숍, 네트워킹 등 다양한 프로그램{% else %}PyLadies Seoul events and activities - seminars, workshops, networking and various programs{% endif %}{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50">
@@ -12,13 +15,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    이벤트 & 활동
+                    {% if LANGUAGE_CODE == 'ko' %}이벤트 & 활동{% else %}Events & Activities{% endif %}
                 </h1>
                 <p class="text-xl md:text-2xl text-purple-100 mb-8">
-                    Events & Activities
+                    {% if LANGUAGE_CODE == 'ko' %}Events & Activities{% else %}이벤트 & 활동{% endif %}
                 </p>
                 <p class="text-lg text-purple-100 max-w-2xl mx-auto">
-                    PyLadies Seoul의 다양한 세미나, 워크숍, 네트워킹 이벤트를 만나보세요
+                    {% if LANGUAGE_CODE == 'ko' %}PyLadies Seoul의 다양한 세미나, 워크숍, 네트워킹 이벤트를 만나보세요{% else %}Discover PyLadies Seoul's various seminars, workshops, and networking events{% endif %}
                 </p>
             </div>
         </div>
@@ -34,12 +37,24 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {% include 'components/empty_state.html' with icon=CALENDAR_ICON title='아직 등록된 이벤트가 없습니다' description='곧 새로운 이벤트가 공개될 예정입니다.' %}
+                {% if LANGUAGE_CODE == 'ko' %}
+                    {% include 'components/empty_state.html' with icon=CALENDAR_ICON title='아직 등록된 이벤트가 없습니다' message='곧 새로운 이벤트가 공개될 예정입니다.' %}
+                {% else %}
+                    {% trans "No events have been registered yet" as empty_title %}
+                    {% trans "New events will be announced soon." as empty_msg %}
+                    {% include 'components/empty_state.html' with icon=CALENDAR_ICON title=empty_title message=empty_msg %}
+                {% endif %}
             {% endif %}
         </div>
     </section>
 
     <!-- Call to Action -->
-    {% include 'components/contact_section.html' with title='PyLadies Seoul에 참여하세요!' description='우리 커뮤니티에서 개최되는 다양한 이벤트와 활동에 참여하여 함께 성장하고 네트워킹할 수 있는 기회를 만나보세요.' %}
+    {% if LANGUAGE_CODE == 'ko' %}
+        {% include 'components/contact_section.html' with title='PyLadies Seoul에 참여하세요!' description='우리 커뮤니티에서 개최되는 다양한 이벤트와 활동에 참여하여 함께 성장하고 네트워킹할 수 있는 기회를 만나보세요.' %}
+    {% else %}
+        {% trans "Join PyLadies Seoul!" as join_title %}
+        {% trans "Join various events and activities in our community to grow together and find networking opportunities." as join_desc %}
+        {% include 'components/contact_section.html' with title=join_title description=join_desc %}
+    {% endif %}
 </div>
 {% endblock %}

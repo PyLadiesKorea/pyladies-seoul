@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ event.title_ko }} | PyLadies Seoul{% endblock %}
 
@@ -237,7 +238,9 @@
     </section>
 
     <!-- Contact Section -->
-    {% include 'components/contact_section.html' with title='이벤트 참여 및 문의' description='이벤트에 참여하고 싶거나 궁금한 점이 있으시면 언제든 연락해주세요!' %}
+    {% trans "Event Participation & Inquiry" as contact_title %}
+    {% trans "If you want to participate in the event or have any questions, feel free to contact us anytime!" as contact_desc %}
+    {% include 'components/contact_section.html' with title=contact_title description=contact_desc %}
 
     <!-- Related Events -->
     {% if related_events %}

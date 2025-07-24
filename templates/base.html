@@ -1,13 +1,17 @@
 {% load static %}
 {% load tailwind_tags %}
+{% load i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="{% block lang %}ko{% endblock %}">
+<html lang="{% if LANGUAGE_CODE == 'ko' %}ko{% else %}en{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PyLadies Seoul{% endblock %}</title>
-    <meta name="description" content="{% block description %}PyLadies Seoul - 여성 개발자 네트워킹과 성장을 지원하는 커뮤니티{% endblock %}">
+    <meta name="description" content="{% block description %}{% if LANGUAGE_CODE == 'ko' %}PyLadies Seoul - 여성 개발자 네트워킹과 성장을 지원하는 커뮤니티{% else %}PyLadies Seoul - A community supporting networking and growth for female developers{% endif %}{% endblock %}">
     {% tailwind_css %}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -21,21 +25,44 @@
 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex space-x-8">
-                    <a href="{% url 'coc' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">CoC</a>
-                    <a href="{% url 'events_list' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Events</a>
-                    <a href="{% url 'contribute' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">Contribute</a>
+                    <a href="{% url 'coc' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">{% if LANGUAGE_CODE == 'ko' %}행동강령{% else %}CoC{% endif %}</a>
+                    <a href="{% url 'events_list' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">{% if LANGUAGE_CODE == 'ko' %}이벤트{% else %}Events{% endif %}</a>
+                    <a href="{% url 'contribute' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">{% if LANGUAGE_CODE == 'ko' %}기여하기{% else %}Contribute{% endif %}</a>
                     <a href="{% url 'faq' %}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium">FAQ</a>
                 </div>
 
                 <!-- Language Selector -->
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button class="flex items-center space-x-1 text-gray-700 hover:text-purple-600">
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" class="flex items-center space-x-1 text-gray-700 hover:text-purple-600">
+                            {% get_current_language as LANGUAGE_CODE %}
                             <span class="text-sm font-medium">{% if LANGUAGE_CODE == 'ko' %}한국어{% else %}English{% endif %}</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 transform scale-95"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-95"
+                             class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                             style="display: none;">
+                            <div class="py-1">
+                                <form action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ request.get_full_path|slice:'3:' }}">
+                                    <button type="submit" name="language" value="ko" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        한국어
+                                    </button>
+                                    <button type="submit" name="language" value="en" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        English
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

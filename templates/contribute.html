@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}기여하기 - PyLadies Seoul{% endblock %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}{% if LANGUAGE_CODE == 'ko' %}기여하기{% else %}Contribute{% endif %} - PyLadies Seoul{% endblock %}
 
 {% block content %}
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">기여하기</h1>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                {% if LANGUAGE_CODE == 'ko' %}기여하기{% else %}Contribute{% endif %}
+            </h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                PyLadies Seoul과 함께 성장하고 커뮤니티에 기여할 수 있는 다양한 방법들을 소개합니다.
+                {% if LANGUAGE_CODE == 'ko' %}PyLadies Seoul과 함께 성장하고 커뮤니티에 기여할 수 있는 다양한 방법들을 소개합니다.{% else %}Discover various ways to grow with PyLadies Seoul and contribute to our community.{% endif %}
             </p>
         </div>
 
@@ -16,14 +21,16 @@
             {% for opportunity in opportunities %}
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition border-l-4 border-purple-600">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-semibold text-gray-900">{{ opportunity.title_ko }}</h3>
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            {% if LANGUAGE_CODE == 'ko' %}{{ opportunity.title_ko }}{% else %}{{ opportunity.title_en|default:opportunity.title_ko }}{% endif %}
+                        </h3>
                         {% if opportunity.is_open %}
                             <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                모집중
+                                {% if LANGUAGE_CODE == 'ko' %}모집중{% else %}Open{% endif %}
                             </span>
                         {% else %}
                             <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                모집마감
+                                {% if LANGUAGE_CODE == 'ko' %}모집마감{% else %}Closed{% endif %}
                             </span>
                         {% endif %}
                     </div>
@@ -32,7 +39,9 @@
                             {{ opportunity.get_type_display }}
                         </span>
                     </div>
-                    <p class="text-gray-600 mb-4">{{ opportunity.description_ko }}</p>
+                    <p class="text-gray-600 mb-4">
+                        {% if LANGUAGE_CODE == 'ko' %}{{ opportunity.description_ko }}{% else %}{{ opportunity.description_en|default:opportunity.description_ko }}{% endif %}
+                    </p>
 
                     {% if opportunity.requirements_ko %}
                         <div class="mb-4">

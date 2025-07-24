@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
 
 {% block title %}FAQ - PyLadies Seoul{% endblock %}
 
@@ -6,9 +9,11 @@
 <section class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">자주 묻는 질문</h1>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                {% if LANGUAGE_CODE == 'ko' %}자주 묻는 질문{% else %}Frequently Asked Questions{% endif %}
+            </h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                PyLadies Seoul에 대해 자주 묻는 질문들을 정리했습니다. 더 궁금한 점이 있으시면 언제든 Discord로 문의해주세요!
+                {% if LANGUAGE_CODE == 'ko' %}PyLadies Seoul에 대해 자주 묻는 질문들을 정리했습니다. 더 궁금한 점이 있으시면 언제든 Discord로 문의해주세요!{% else %}We've compiled frequently asked questions about PyLadies Seoul. If you have any other questions, feel free to contact us on Discord!{% endif %}
             </p>
         </div>
 
@@ -18,17 +23,17 @@
             <div class="mb-12">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-purple-600">
                     {% if category_group.grouper == 'general' %}
-                        일반적인 질문
+                        {% if LANGUAGE_CODE == 'ko' %}일반적인 질문{% else %}General Questions{% endif %}
                     {% elif category_group.grouper == 'joining' %}
-                        참여 방법
+                        {% if LANGUAGE_CODE == 'ko' %}참여 방법{% else %}How to Join{% endif %}
                     {% elif category_group.grouper == 'participation' %}
-                        활동 참여
+                        {% if LANGUAGE_CODE == 'ko' %}활동 참여{% else %}Participation{% endif %}
                     {% elif category_group.grouper == 'technical' %}
-                        기술적 질문
+                        {% if LANGUAGE_CODE == 'ko' %}기술적 질문{% else %}Technical Questions{% endif %}
                     {% elif category_group.grouper == 'contact' %}
-                        연락처
+                        {% if LANGUAGE_CODE == 'ko' %}연락처{% else %}Contact{% endif %}
                     {% else %}
-                        기타
+                        {% if LANGUAGE_CODE == 'ko' %}기타{% else %}Others{% endif %}
                     {% endif %}
                 </h2>
 
@@ -38,7 +43,9 @@
                             <button class="w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-lg"
                                     onclick="toggleFaq(this)">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-lg font-semibold text-gray-900 pr-8">{{ faq.question_ko }}</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 pr-8">
+                                        {% if LANGUAGE_CODE == 'ko' %}{{ faq.question_ko }}{% else %}{{ faq.question_en|default:faq.question_ko }}{% endif %}
+                                    </h3>
                                     <svg class="w-6 h-6 text-gray-500 transform transition-transform duration-200"
                                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -47,7 +54,7 @@
                             </button>
                             <div class="hidden px-6 pb-6">
                                 <div class="text-gray-700 leading-relaxed">
-                                    {{ faq.answer_ko|linebreaks }}
+                                    {% if LANGUAGE_CODE == 'ko' %}{{ faq.answer_ko|linebreaks }}{% else %}{{ faq.answer_en|default:faq.answer_ko|linebreaks }}{% endif %}
                                 </div>
                             </div>
                         </div>

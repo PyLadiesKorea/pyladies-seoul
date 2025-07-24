@@ -14,6 +14,13 @@ CTA Section 컴포넌트 - Call-to-Action 섹션
 - button_style_2, button_text_2, button_href_2: 두 번째 버튼 (선택)
 {% endcomment %}
 
+{% load i18n %}
+{% trans "The fastest way to communicate. Ask questions and get answers in real time." as chat_desc %}
+{% trans "Join Discord" as chat_btn %}
+{% trans "Email" as email_title %}
+{% trans "Please send official proposals or collaboration inquiries via email." as email_desc %}
+{% trans "Send Email" as email_btn %}
+
 <section class="py-16 bg-{{ bg_color|default:'purple-600' }}">
     <div class="max-w-{% if layout == 'cards' %}4xl{% else %}7xl{% endif %} mx-auto px-4 sm:px-6 lg:px-8{% if layout != 'cards' %} text-center{% endif %}">
         {% if layout == 'cards' %}
@@ -24,8 +31,8 @@ CTA Section 컴포넌트 - Call-to-Action 섹션
                 {% endif %}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {% include 'components/contact_card.html' with icon=CHAT_ICON title='Discord' description='가장 빠른 소통 방법입니다. 실시간으로 질문하고 답변받을 수 있어요.' button_text='Discord 참여하기' button_href=discord_url %}
-            {% include 'components/contact_card.html' with icon=EMAIL_ICON title='이메일' description='공식적인 제안이나 협업 관련 문의는 이메일로 보내주세요.' button_text='이메일 보내기' button_href='mailto:'|add:community_info.email %}
+                {% include 'components/contact_card.html' with icon=CHAT_ICON title='Discord' description=chat_desc button_text=chat_btn button_href=discord_url %}
+                {% include 'components/contact_card.html' with icon=EMAIL_ICON title=email_title description=email_desc button_text=email_btn button_href='mailto:'|add:community_info.email %}
             </div>
         {% else %}
             <h2 class="text-3xl md:text-4xl font-bold text-{{ text_color|default:'white' }} mb-4">{{ title }}</h2>
