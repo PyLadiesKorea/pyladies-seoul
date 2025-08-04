@@ -35,9 +35,6 @@ RUN mkdir -p /app/data
 RUN mkdir -p /app/staticfiles && chmod 755 /app/staticfiles
 RUN mkdir -p /app/media && chmod 755 /app/media
 
-# Change ownership of media folder to appuser
-RUN chown -R appuser:root /app/media
-
 # Build CSS
 WORKDIR /app/theme/static_src
 RUN npm install && npm run build
@@ -47,4 +44,8 @@ WORKDIR /app
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+
+# Change ownership of media folder to appuser
+RUN chown -R appuser:root /app/media
+
 USER appuser
