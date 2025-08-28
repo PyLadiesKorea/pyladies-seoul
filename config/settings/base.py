@@ -96,7 +96,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "apps.common.middleware.SimplePerformanceMiddleware",
-    "config.logfire_config.LogfireMiddleware",
+    
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 

@@ -1,47 +1,4 @@
-version: '3.8'
-
 services:
-  # PostgreSQL Database for Staging
-  db:
-    image: postgres:15-alpine
-    container_name: pyladies_seoul_db_staging
-    restart: unless-stopped
-    volumes:
-      - postgres_data_staging:/var/lib/postgresql/data/
-      - postgres_backups_staging:/backups/
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB:-pyladies_seoul_staging}
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-staging_password_change_me}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pyladies_seoul_staging}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - backend
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-
-  # Redis Cache for Staging
-  redis:
-    image: redis:7-alpine
-    container_name: pyladies_seoul_redis_staging
-    restart: unless-stopped
-    volumes:
-      - redis_data_staging:/data
-    command: redis-server --requirepass ${REDIS_PASSWORD:-staging_redis_password}
-    healthcheck:
-      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-staging_redis_password}", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    networks:
-      - backend
 
   # Django Application - Staging
   web:
@@ -51,31 +8,18 @@ services:
     container_name: pyladies_seoul_web_staging
     restart: unless-stopped
     volumes:
+      - db_volume_staging:/app/db
       - media_volume_staging:/app/media
       - static_volume_staging:/app/static
       - log_volume_staging:/app/logs
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-staging_password_change_me}@db:5432/${POSTGRES_DB:-pyladies_seoul_staging}
-      - REDIS_URL=redis://:${REDIS_PASSWORD:-staging_redis_password}@redis:6379/0
+      - DJANGO_SETTINGS_MODULE=config.settings.staging
       - SECRET_KEY=${SECRET_KEY:-staging-secret-key-change-in-production}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-staging.pyladiesseoul.org,localhost}
       - DEBUG=False
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@staging.pyladiesseoul.org}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-staging_admin_password}
-      # Email configuration (using console backend for staging)
-      - EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-      - DEFAULT_FROM_EMAIL=noreply@staging.pyladiesseoul.org
-      # Monitoring (optional for staging)
-      - SENTRY_DSN=${SENTRY_DSN}
-      - SENTRY_ENVIRONMENT=staging
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     networks:
-      - backend
       - frontend
     deploy:
       resources:
@@ -104,11 +48,7 @@ services:
       - frontend
 
 volumes:
-  postgres_data_staging:
-    driver: local
-  postgres_backups_staging:
-    driver: local
-  redis_data_staging:
+  db_volume_staging:
     driver: local
   media_volume_staging:
     driver: local
@@ -120,6 +60,3 @@ volumes:
 networks:
   frontend:
     driver: bridge
-  backend:
-    driver: bridge
-    internal: true

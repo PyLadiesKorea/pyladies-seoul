@@ -15,44 +15,26 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == [""]:
     raise ValueError("ALLOWED_HOSTS environment variable must be set for production")
 
-# Database - MUST be set via environment variable
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable must be set for production")
-
+# Database - Use SQLite for production
 DATABASES = {
-    "default": dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db" / "db_production.sqlite3",
+        "OPTIONS": {
+            "timeout": 20,
+        },
+    }
 }
 
-# Cache configuration - Redis required for production
-REDIS_URL = os.environ.get("REDIS_URL")
-if not REDIS_URL:
-    raise ValueError("REDIS_URL environment variable must be set for production")
-
+# Cache configuration - Use dummy cache for production
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 50,
-                "retry_on_timeout": True,
-            },
-        },
-        "KEY_PREFIX": "pyladies_seoul_prod",
-        "VERSION": 1,
-        "TIMEOUT": 300,  # 5 minutes default timeout
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
 # Session configuration
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -74,15 +56,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Additional security headers
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
-# Email configuration for production
-EMAIL_BACKEND = "django_anymail.backends.mailgun.EmailBackend"
-ANYMAIL = {
-    "MAILGUN_API_KEY": os.environ.get("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": os.environ.get("MAILGUN_SENDER_DOMAIN"),
-}
 
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@pyladiesseoul.org")
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Static and media files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -189,38 +163,6 @@ MANAGERS = ADMINS
 # Wagtail settings for production
 WAGTAIL_ENABLE_UPDATE_CHECK = False
 WAGTAILADMIN_BASE_URL = os.environ.get("BASE_URL", "https://pyladiesseoul.org")
-
-# Error reporting with Sentry (optional)
-SENTRY_DSN = os.environ.get("SENTRY_DSN")
-if SENTRY_DSN:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import LoggingIntegration
-
-    sentry_logging = LoggingIntegration(
-        level=logging.INFO,        # Capture info and above as breadcrumbs
-        event_level=logging.ERROR  # Send errors as events
-    )
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[
-            DjangoIntegration(),
-            sentry_logging,
-        ],
-        traces_sample_rate=0.1,
-        send_default_pii=True,
-        environment=os.environ.get("SENTRY_ENVIRONMENT", "production"),
-    )
-
-# Database connection pooling (if using pgbouncer)
-if os.environ.get("USE_PGBOUNCER"):
-    DATABASES["default"]["OPTIONS"] = {
-        "MAX_CONNS": 20,
-        "OPTIONS": {
-            "CONN_MAX_AGE": 0,
-        },
-    }
 
 # Content Security Policy
 CSP_DEFAULT_SRC = ("'self'",)

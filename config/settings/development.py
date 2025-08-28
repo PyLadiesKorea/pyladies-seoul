@@ -6,12 +6,7 @@ This file is used for local development.
 
 from .base import *  # noqa
 
-# Configure Logfire APM
-try:
-    from config.logfire_config import configure_logfire
-    configure_logfire()
-except ImportError:
-    print("⚠️  Logfire not available, skipping APM configuration")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,17 +24,13 @@ ALLOWED_HOSTS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db" / "db.sqlite3",
     }
 }
 
-# Override with PostgreSQL if DATABASE_URL is set
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if DATABASE_URL:
-    DATABASES["default"] = dj_database_url.config(default=DATABASE_URL)
 
-# Email backend for development
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
 
 # Disable caching in development
 CACHES = {
@@ -48,18 +39,7 @@ CACHES = {
     }
 }
 
-# Enable Redis cache if REDIS_URL is provided
-REDIS_URL = os.environ.get("REDIS_URL")
-if REDIS_URL:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-        }
-    }
+
 
 # Disable compression in development
 COMPRESS_ENABLED = False

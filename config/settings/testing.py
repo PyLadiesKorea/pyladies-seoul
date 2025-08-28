@@ -43,8 +43,7 @@ CACHES = {
 DEFAULT_FILE_STORAGE = "django.core.files.storage.InMemoryStorage"
 MEDIA_ROOT = "/tmp/test_media/"
 
-# Email backend for tests
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
 
 # Password hashers - use fast hasher for tests
 PASSWORD_HASHERS = [

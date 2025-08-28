@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyLadies Seoul - Health Check</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .status {
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>✅ 서비스 정상</h1>
+        <p>PyLadies Seoul 웹사이트가 정상적으로 작동하고 있습니다.</p>
+    </div>
+    
+    <div class="info">
+        <h2>서비스 정보</h2>
+        <p><strong>상태:</strong> {{ status|default:"healthy" }}</p>
+        <p><strong>시간:</strong> {{ now|date:"Y-m-d H:i:s" }}</p>
+        <p><strong>환경:</strong> Staging</p>
+    </div>
+</body>
+</html>

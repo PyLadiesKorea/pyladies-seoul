@@ -40,7 +40,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "django-environ>=0.11.2",
     # Monitoring and Logging
-    "logfire[django]>=0.1.0",
+
     "sentry-sdk[django]>=1.38.0",
     # Static Files and Assets
     "whitenoise>=6.6.0",
