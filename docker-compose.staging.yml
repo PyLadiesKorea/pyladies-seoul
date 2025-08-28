@@ -7,6 +7,8 @@ services:
       target: production
     container_name: pyladies_seoul_web_staging
     restart: unless-stopped
+    env_file:
+      - .env.staging
     volumes:
       - db_volume_staging:/app/db
       - media_volume_staging:/app/media
@@ -17,7 +19,7 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.staging
       - SECRET_KEY=${SECRET_KEY:-staging-secret-key-change-in-production}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-staging.pyladiesseoul.org,localhost}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
       - DEBUG=False
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@staging.pyladiesseoul.org}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-staging_admin_password}
@@ -42,7 +44,7 @@ services:
       - static_volume_staging:/app/static:ro
       - log_volume_staging:/var/log/nginx
     environment:
-      - DOMAIN_NAME=${DOMAIN_NAME:-staging.pyladiesseoul.org}
+      - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
     depends_on:
       - web
     networks:
