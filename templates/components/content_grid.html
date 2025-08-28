@@ -1,0 +1,37 @@
+{% comment %}
+Content Grid Component
+
+사용법:
+{% include "components/content_grid.html" with contents=content_pages %}
+
+매개변수:
+- contents: 콘텐츠 리스트 (필수)
+- columns: 그리드 컬럼 수 - 2, 3, 4 (기본값: 3)
+- show_empty_message: 빈 상태 메시지 표시 여부 (기본값: True)
+- empty_message: 빈 상태 메시지 (기본값: "No content found")
+- empty_icon: 빈 상태 아이콘 (기본값: "fas fa-search")
+- class: 추가 CSS 클래스 (선택)
+- filter_type: 필터 타입 - "all", "events", "non_events", "upcoming_events", "past_events" (기본값: "all")
+{% endcomment %}
+
+{% load content_tags %}
+
+{% if filter_type == "events" %}
+    {% with filtered_contents=contents|filter_events %}
+        {% include "components/content_grid_items.html" with contents=filtered_contents columns=columns class=class show_empty_message=show_empty_message empty_message=empty_message empty_icon=empty_icon %}
+    {% endwith %}
+{% elif filter_type == "non_events" %}
+    {% with filtered_contents=contents|filter_non_events %}
+        {% include "components/content_grid_items.html" with contents=filtered_contents columns=columns class=class show_empty_message=show_empty_message empty_message=empty_message empty_icon=empty_icon %}
+    {% endwith %}
+{% elif filter_type == "upcoming_events" %}
+    {% with filtered_contents=contents|filter_upcoming_events %}
+        {% include "components/content_grid_items.html" with contents=filtered_contents columns=columns class=class show_empty_message=show_empty_message empty_message=empty_message empty_icon=empty_icon %}
+    {% endwith %}
+{% elif filter_type == "past_events" %}
+    {% with filtered_contents=contents|filter_past_events %}
+        {% include "components/content_grid_items.html" with contents=filtered_contents columns=columns class=class show_empty_message=show_empty_message empty_message=empty_message empty_icon=empty_icon %}
+    {% endwith %}
+{% else %}
+    {% include "components/content_grid_items.html" with contents=contents columns=columns class=class show_empty_message=show_empty_message empty_message=empty_message empty_icon=empty_icon %}
+{% endif %}

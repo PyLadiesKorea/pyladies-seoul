@@ -1,0 +1,205 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if tests fail'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: pyladies-seoul/staging
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix=staging-
+          type=raw,value=latest
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        target: production
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          GIT_COMMIT=${{ github.sha }}
+
+    - name: Deploy to staging server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.STAGING_HOST }}
+        username: ${{ secrets.STAGING_USER }}
+        key: ${{ secrets.STAGING_SSH_KEY }}
+        port: ${{ secrets.STAGING_PORT || 22 }}
+        script: |
+          set -e
+          
+          echo "🚀 Starting staging deployment..."
+          
+          # Navigate to application directory
+          cd /opt/pyladies-seoul
+          
+          # Create backup before deployment
+          echo "📦 Creating pre-deployment backup..."
+          ./scripts/backup.sh full
+          
+          # Pull latest changes
+          echo "📥 Pulling latest code..."
+          git fetch origin
+          git checkout develop
+          git pull origin develop
+          
+          # Update environment variables
+          echo "🔧 Updating environment variables..."
+          export IMAGE_TAG="staging-${{ github.sha }}"
+          export BUILD_DATE="${{ github.event.head_commit.timestamp }}"
+          export GIT_COMMIT="${{ github.sha }}"
+          
+          # Pull new Docker image
+          echo "🐳 Pulling Docker image..."
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-${{ github.sha }}
+          
+          # Update docker-compose to use new image
+          sed -i "s|image: .*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-${{ github.sha }}|g" docker-compose.staging.yml
+          
+          # Run database migrations
+          echo "🔄 Running database migrations..."
+          docker-compose -f docker-compose.staging.yml exec -T web python manage.py migrate --settings=config.settings.production
+          
+          # Collect static files
+          echo "📦 Collecting static files..."
+          docker-compose -f docker-compose.staging.yml exec -T web python manage.py collectstatic --noinput --settings=config.settings.production
+          
+          # Deploy with zero-downtime
+          echo "🔄 Performing zero-downtime deployment..."
+          
+          # Start new containers
+          docker-compose -f docker-compose.staging.yml up -d --no-deps web
+          
+          # Wait for new container to be healthy
+          echo "⏳ Waiting for new container to be ready..."
+          timeout=60
+          count=0
+          while [ $count -lt $timeout ]; do
+            if docker-compose -f docker-compose.staging.yml exec -T web curl -f http://localhost:8000/health/ >/dev/null 2>&1; then
+              echo "✅ New container is healthy!"
+              break
+            fi
+            echo "Waiting for container to be ready... ($count/$timeout)"
+            sleep 2
+            count=$((count + 2))
+          done
+          
+          if [ $count -ge $timeout ]; then
+            echo "❌ New container failed to become healthy, rolling back..."
+            docker-compose -f docker-compose.staging.yml logs web
+            exit 1
+          fi
+          
+          # Update other services
+          echo "🔄 Updating other services..."
+          docker-compose -f docker-compose.staging.yml up -d
+          
+          # Clean up old images
+          echo "🧹 Cleaning up old Docker images..."
+          docker image prune -f --filter "dangling=true"
+          
+          # Restart services to ensure everything is running
+          echo "🔄 Final service restart..."
+          docker-compose -f docker-compose.staging.yml restart nginx
+          
+          echo "✅ Staging deployment completed successfully!"
+
+    - name: Run post-deployment tests
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.STAGING_HOST }}
+        username: ${{ secrets.STAGING_USER }}
+        key: ${{ secrets.STAGING_SSH_KEY }}
+        port: ${{ secrets.STAGING_PORT || 22 }}
+        script: |
+          set -e
+          
+          echo "🧪 Running post-deployment tests..."
+          
+          # Test application health
+          if ! curl -f https://staging.pyladiesseoul.org/health/ >/dev/null 2>&1; then
+            echo "❌ Health check failed"
+            exit 1
+          fi
+          
+          # Test database connectivity
+          cd /opt/pyladies-seoul
+          if ! docker-compose -f docker-compose.staging.yml exec -T web python manage.py check --deploy --settings=config.settings.production; then
+            echo "❌ Django deployment check failed"
+            exit 1
+          fi
+          
+          # Test static files
+          if ! curl -f -I https://staging.pyladiesseoul.org/static/css/main.css >/dev/null 2>&1; then
+            echo "❌ Static files not accessible"
+            exit 1
+          fi
+          
+          echo "✅ All post-deployment tests passed!"
+
+    - name: Notify deployment status
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        text: |
+          Staging deployment ${{ job.status }}!
+          
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Author: ${{ github.actor }}
+          
+          Staging URL: https://staging.pyladiesseoul.org
+          
+          ${{ job.status == 'success' && '✅ Ready for testing!' || '❌ Check logs for details' }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Update deployment status
+      if: success()
+      run: |
+        echo "✅ Staging deployment completed at $(date)"
+        echo "🔗 Staging URL: https://staging.pyladiesseoul.org"
+        echo "📋 Build: ${{ github.sha }}"

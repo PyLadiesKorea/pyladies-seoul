@@ -1,0 +1,20 @@
+{% comment %}
+Social Links Component
+Usage: {% include "components/social_links.html" with member=member %}
+{% endcomment %}
+
+{% if member.get_social_links %}
+    <div class="mb-4">
+        <h6>Connect with {{ member.name }}</h6>
+        <div class="d-flex gap-3">
+            {% for social in member.get_social_links %}
+                <a href="{{ social.full_url }}" target="_blank" 
+                   class="btn btn-outline-secondary btn-sm" 
+                   title="{{ social.get_display_name }}">
+                    <i class="{{ social.icon_class }}"></i>
+                    {{ social.get_display_name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

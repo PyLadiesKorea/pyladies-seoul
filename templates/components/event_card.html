@@ -1,48 +1,107 @@
 {% comment %}
-Event Card 컴포넌트 - 이벤트/활동 카드
+Event Card Component
+
 사용법:
-{% include 'components/event_card.html' with event=event %}
+{% include "components/event_card.html" with event=content type="featured" %}
+{% include "components/event_card.html" with event=content type="regular" %}
+
+매개변수:
+- event: 이벤트 객체 (필수)
+- type: 카드 타입 - "featured" 또는 "regular" (기본값: "regular")
+- show_status: 상태 표시 여부 (기본값: True)
 {% endcomment %}
 
-{% load i18n %}
-{% trans "Featured" as featured_text %}
-{% trans "Recruiting" as recruiting_text %}
-{% get_current_language as LANGUAGE_CODE %}
+{% load content_tags %}
 
-<a href="{% url 'event_detail' event.id %}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group">
-    {% if event.image %}
-    <div class="aspect-square bg-gray-200 overflow-hidden">
-        <img src="{{ event.image.url }}" alt="{% if LANGUAGE_CODE == 'ko' %}{{ event.title_ko }}{% else %}{{ event.title_en|default:event.title_ko }}{% endif %}" class="w-full h-full object-cover">
-    </div>
-    {% endif %}
-    <div class="p-6">
-        <div class="flex items-center justify-between mb-2">
-            {% if event.activity_type %}
-                {% include 'components/badge.html' with style='purple' text=event.get_activity_type_display %}
+{% if type == "featured" %}
+    <!-- Featured Event Card -->
+    <article class="featured-event" role="article" aria-labelledby="featured-event-title">
+        <div class="event-card-large">
+            <div class="event-card-content">
+                <h3 class="event-card-title" id="featured-event-title">
+                    <a href="{{ event.url }}" class="text-decoration-none">{{ event.title }}</a>
+                </h3>
+                <p class="event-card-subtitle">
+                    {{ event.meta_description|default:event.title|striptags|truncatechars:100 }}
+                </p>
+                {% if event.event_start_at %}
+                <div class="mb-3">
+                    <time datetime="{{ event.event_start_at|date:'Y-m-d\TH:i' }}">
+                        <i class="fas fa-clock" aria-hidden="true"></i> 
+                        <span>{{ event.event_start_at|date:"Y년 m월 d일 H:i" }}</span>
+                    </time>
+                    {% if event.location %}
+                        <br><i class="fas fa-map-marker-alt" aria-hidden="true"></i> 
+                        <span itemprop="location">{{ event.location }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <a href="{{ event.url }}" class="event-card-link" aria-label="View {{ event.title }} details"></a>
+        </div>
+    </article>
+{% else %}
+    <!-- Regular Event Card -->
+    <article class="card h-100" role="article" aria-labelledby="event-title">
+        {% if show_status %}
+            <header class="card-header {% get_event_status_class event %}">
+                <small>
+                    <i class="{% get_event_status_icon event %}" aria-hidden="true"></i> 
+                    {% get_event_status_text event %}
+                </small>
+            </header>
+        {% endif %}
+        
+        <div class="card-body">
+            <h5 class="card-title" id="event-title">
+                <a href="{{ event.url }}" 
+                   class="text-decoration-none"
+                   aria-label="View {{ event.title }} details">{{ event.title }}</a>
+            </h5>
+            
+            {% if event.meta_description %}
+                <p class="card-text">{{ event.meta_description|truncatechars:100 }}</p>
             {% endif %}
-            {% if event.is_featured %}
-                {% include 'components/badge.html' with style='warning' text=featured_text %}
+            
+            <!-- Event specific info -->
+            {% if event.event_start_at %}
+            <div class="mb-2">
+                <time datetime="{{ event.event_start_at|date:'Y-m-d\TH:i' }}" class="text-muted">
+                    <small>
+                        <i class="fas fa-clock" aria-hidden="true"></i> 
+                        {{ event.event_start_at|date:"Y년 m월 d일 H:i" }}
+                    </small>
+                </time>
+                {% if event.location %}
+                    <br><small class="text-muted">
+                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i> 
+                        <span itemprop="location">{{ event.location }}</span>
+                    </small>
+                {% endif %}
+            </div>
             {% endif %}
-            {% if event.is_recruiting %}
-                {% include 'components/badge.html' with style='success' text=recruiting_text %}
+            
+            <!-- Tags -->
+            {% if event.tags.all %}
+                <div class="mb-2" role="group" aria-label="Event tags">
+                    {% for tag in event.tags.all %}
+                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
-        <h3 class="text-xl font-semibold mb-2 group-hover:text-purple-600 transition-colors">
-            {% if LANGUAGE_CODE == 'ko' %}{{ event.title_ko }}{% else %}{{ event.title_en|default:event.title_ko }}{% endif %}
-        </h3>
-        <p class="text-gray-600 mb-4">
-            {% if LANGUAGE_CODE == 'ko' %}{{ event.description_ko|truncatewords:20 }}{% else %}{{ event.description_en|default:event.description_ko|truncatewords:20 }}{% endif %}
-        </p>
-        {% if event.start_datetime %}
-            <div class="flex items-center text-sm text-gray-500">
-                {% include 'components/icons.html' with icon='calendar' color='text-gray-500 mr-1' %}
-                {% if LANGUAGE_CODE == 'ko' %}{{ event.start_datetime|date:"Y년 m월 d일" }}{% else %}{{ event.start_datetime|date:"M d, Y" }}{% endif %}
-            </div>
-        {% elif event.meeting_schedule_ko %}
-            <div class="flex items-center text-sm text-gray-500">
-                {% include 'components/icons.html' with icon='clock' color='text-gray-500 mr-1' %}
-                {% if LANGUAGE_CODE == 'ko' %}{{ event.meeting_schedule_ko }}{% else %}{{ event.meeting_schedule_en|default:event.meeting_schedule_ko }}{% endif %}
-            </div>
-        {% endif %}
-    </div>
-</a>
+        
+        <footer class="card-footer text-muted">
+            <time datetime="{{ event.publication_date|date:'Y-m-d' }}" class="small">
+                <i class="fas fa-calendar-alt" aria-hidden="true"></i> 
+                {{ event.publication_date|date:"Y.m.d" }}
+            </time>
+            {% if event.view_count %}
+                <span class="ms-2 small">
+                    <i class="fas fa-eye" aria-hidden="true"></i> 
+                    <span aria-label="{{ event.view_count }} views">{{ event.view_count }}</span>
+                </span>
+            {% endif %}
+        </footer>
+    </article>
+{% endif %}

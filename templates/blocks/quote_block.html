@@ -1,0 +1,11 @@
+<blockquote class="blockquote my-4">
+    <p class="mb-0">{{ value.quote }}</p>
+    {% if value.author %}
+        <footer class="blockquote-footer mt-2">
+            <cite>
+                {{ value.author }}
+                {% if value.author_title %}, {{ value.author_title }}{% endif %}
+            </cite>
+        </footer>
+    {% endif %}
+</blockquote>

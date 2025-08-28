@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}Connect - PyLadies Seoul{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="connect-hero">
+        <div class="container">
+            <h1 class="connect-title">Connect</h1>
+            <p class="connect-subtitle">Definitely You'll need this!</p>
+        </div>
+    </section>
+
+    <!-- SNS Section -->
+    <section class="connect-sns">
+        <div class="container">
+            <h2 class="section-title">SNS</h2>
+            <p class="section-subtitle">Come and join us!</p>
+            {% include "components/social_links_grid.html" with social_links=social_links %}
+        </div>
+    </section>
+
+    <!-- How to Contribute Section -->
+    <section class="connect-contribute">
+        <div class="container">
+            <h2 class="section-title">How to contribute ...</h2>
+            {% if contribute_methods %}
+                <div class="contribute-grid">
+                    {% for method in contribute_methods %}
+                        {% include "components/contribute_card.html" with method=method %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="contribute-empty">
+                    <p>기여 방법 정보를 준비 중입니다.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="connect-faq">
+        <div class="container">
+            <h2 class="section-title">FAQ</h2>
+            {% include "components/faq_accordion.html" with faq_pages=faq_pages %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/connect_page.js' %}"></script>
+{% endblock %}

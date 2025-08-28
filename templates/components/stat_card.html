@@ -1,0 +1,12 @@
+{% comment %}
+Stat Card Component
+Usage: {% include "components/stat_card.html" with icon="fas fa-users" number="500+" text="Community Members" %}
+{% endcomment %}
+
+<div class="card border-0 h-100">
+    <div class="card-body">
+        <i class="{{ icon }} text-dark fa-3x mb-3"></i>
+        <h3 class="fw-bold">{{ number }}</h3>
+        <p class="text-muted">{{ text }}</p>
+    </div>
+</div>

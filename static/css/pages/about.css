@@ -1,0 +1,245 @@
+/* PyLadies Seoul About Page Styles */
+
+/* ================================
+   ABOUT PAGE LAYOUT
+   ================================ */
+
+.about-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.about-hero {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.about-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.about-content,
+.about-coc,
+.about-contact,
+.about-organizers,
+.about-footer {
+  padding: 3rem 0;
+}
+
+.about-main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.about-content-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.about-content-body {
+  text-align: left;
+  line-height: 1.8;
+  color: var(--color-text-tertiary);
+}
+
+.about-content-body h2,
+.about-content-body h3,
+.about-content-body h4 {
+  color: var(--brand-red);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.about-content-body p {
+  margin-bottom: 1rem;
+}
+
+.about-content-body ul,
+.about-content-body ol {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.about-content-body li {
+  margin-bottom: 0.5rem;
+}
+
+/* ================================
+   CODE OF CONDUCT SECTION
+   ================================ */
+
+.coc-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.coc-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* ================================
+   CONTACT SECTION
+   ================================ */
+
+.about-contact {
+  text-align: center;
+}
+
+.contact-email {
+  font-size: var(--font-size-xl);
+  margin-bottom: 1.5rem;
+}
+
+.contact-email a {
+  color: var(--brand-red);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.contact-email a:hover {
+  color: var(--brand-red-dark);
+  text-decoration: underline;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: var(--border-radius-full);
+  background: var(--brand-red);
+  color: var(--color-text-white);
+  text-decoration: none;
+  transition: background-color var(--transition-base), transform var(--transition-base);
+  font-size: var(--font-size-xl);
+}
+
+.social-link:hover {
+  background: var(--brand-red-dark);
+  transform: scale(1.1);
+}
+
+/* ================================
+   ORGANIZERS SECTION
+   ================================ */
+
+.organizers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.organizer-card {
+  text-align: center;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.organizer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-2xl);
+}
+
+.organizer-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.organizer-photo-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: var(--border-radius-full);
+  background: var(--gradient-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: var(--font-size-5xl);
+  color: var(--color-text-white);
+  font-weight: bold;
+}
+
+.organizer-name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.organizer-role {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* ================================
+   FOOTER SECTION
+   ================================ */
+
+.about-footer {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+  border-top: 2px solid var(--brand-overlay-20);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
+
+@media (max-width: 768px) {
+  .about-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .organizers-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .organizer-card {
+    padding: 1.5rem;
+  }
+  
+  .organizer-photo,
+  .organizer-photo-placeholder {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-page {
+    padding: 1rem 0;
+  }
+  
+  .organizers-grid {
+    grid-template-columns: 1fr;
+  }
+}

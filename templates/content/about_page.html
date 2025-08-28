@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}About - PyLadies Seoul{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1 class="about-title">About</h1>
+        </div>
+    </section>
+
+    <!-- About Content Section -->
+    {% if about_page %}
+    <section class="about-content">
+        <div class="container">
+            <div class="about-main-content">
+                <h2 class="about-content-title">PyLadies Seoul is . . .</h2>
+                <div class="about-content-body">
+                    {% for block in about_page.body %}
+                        {% include_block block %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Code of Conduct Section -->
+    <section class="about-coc">
+        <div class="container">
+            <h2 class="section-title">CoC</h2>
+            <div class="coc-content">
+                {% if coc_page %}
+                    {% for block in coc_page.body %}
+                        {% include_block block %}
+                    {% endfor %}
+                {% else %}
+                    <p>Code of Conduct will be available soon.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="about-contact">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="contact-content">
+                <p class="contact-email">
+                    <a href="mailto:seoul@pyladies.com">seoul@pyladies.com</a>
+                </p>
+                {% include "components/social_links_grid.html" with social_links=social_platforms %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Organizers Section -->
+    <section class="about-organizers">
+        <div class="container">
+            <h2 class="section-title">Organizers</h2>
+            <div class="organizers-grid">
+                {% for organizer in organizers %}
+                    {% include "components/organizer_card.html" with organizer=organizer %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

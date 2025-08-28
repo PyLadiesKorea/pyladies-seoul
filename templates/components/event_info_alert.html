@@ -1,0 +1,37 @@
+{% comment %}
+Event Info Alert Component
+Usage: {% include "components/event_info_alert.html" with event=page %}
+{% endcomment %}
+
+{% if event.is_event %}
+    <div class="alert alert-success">
+        <div class="row">
+            {% if event.event_start_at %}
+            <div class="col-md-6">
+                <strong><i class="fas fa-clock"></i> 일시</strong><br>
+                {{ event.event_start_at|date:"Y년 m월 d일 H:i" }}
+                {% if event.event_end_at %}
+                    - {{ event.event_end_at|date:"H:i" }}
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if event.location %}
+            <div class="col-md-6">
+                <strong><i class="fas fa-map-marker-alt"></i> 장소</strong><br>
+                {{ event.location }}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if event.is_upcoming_event %}
+            <div class="mt-3">
+                <span class="badge bg-warning">Upcoming Event</span>
+            </div>
+        {% elif event.is_past_event %}
+            <div class="mt-3">
+                <span class="badge bg-secondary">Past Event</span>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

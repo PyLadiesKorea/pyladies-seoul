@@ -1,0 +1,55 @@
+{% comment %}
+Interview Info Component
+
+사용법:
+{% include "components/interview_info.html" with interview=page %}
+
+매개변수:
+- interview: 인터뷰 객체 (필수, is_interview, related_member 속성 필요)
+- show_avatar: 아바타 표시 여부 (기본값: True)
+- class: 추가 CSS 클래스 (선택)
+{% endcomment %}
+
+{% if interview.is_interview and interview.related_member %}
+    <div class="alert alert-info interview-info {{ class|default:'' }}" role="alert">
+        <div class="row align-items-center">
+            {% if show_avatar and interview.related_member.photo %}
+                <div class="col-auto">
+                    <img src="{{ interview.related_member.photo.url }}" 
+                         alt="{{ interview.related_member.name }}" 
+                         class="rounded-circle" 
+                         width="60" 
+                         height="60"
+                         loading="lazy">
+                </div>
+            {% endif %}
+            <div class="col">
+                <strong>
+                    <i class="fas fa-user" aria-hidden="true"></i> 
+                    인터뷰 대상자
+                </strong>
+                <br>
+                <a href="/member/{{ interview.related_member.id }}/" 
+                   class="text-decoration-none fw-bold">
+                    {{ interview.related_member.name }}
+                </a>
+                {% if interview.related_member.role %}
+                    <br>
+                    <small class="text-muted">{{ interview.related_member.role }}</small>
+                {% endif %}
+                {% if interview.related_member.bio %}
+                    <br>
+                    <small class="text-muted">{{ interview.related_member.bio|truncatechars:100 }}</small>
+                {% endif %}
+            </div>
+            <div class="col-auto">
+                <a href="/member/{{ interview.related_member.id }}/" 
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-user-circle" aria-hidden="true"></i> 
+                    프로필 보기
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+

@@ -1,0 +1,112 @@
+/* Global Social Media Icons Override - Use CSS Variable */
+
+/* ===========================================
+   ALL SOCIAL MEDIA ICONS - UNIFIED STYLING
+   =========================================== */
+
+/* Footer social media icons */
+footer a i,
+footer a i.fab,
+footer i.fab,
+.footer a i,
+.footer a i.fab,
+.footer i.fab,
+footer.footer a i,
+footer.footer a i.fab,
+footer.footer i.fab,
+body footer a i,
+body footer a i.fab,
+body footer i.fab,
+body .footer a i,
+body .footer a i.fab,
+body .footer i.fab,
+html footer a i,
+html footer a i.fab,
+html footer i.fab,
+html .footer a i,
+html .footer a i.fab,
+html .footer i.fab {
+  color: var(--social-icon-color) !important;
+}
+
+/* Connect page SNS section icons */
+.sns-link i,
+.sns-link i.fab,
+.sns-links a i,
+.sns-links a i.fab,
+.connect-sns i,
+.connect-sns i.fab,
+.connect-sns a i,
+.connect-sns a i.fab {
+  color: var(--social-icon-color) !important;
+}
+
+/* More specific targeting for all social platforms */
+footer .d-flex a i.fa-github,
+footer .d-flex a i.fa-twitter,
+footer .d-flex a i.fa-instagram,
+footer .d-flex a i.fa-discord,
+footer .d-flex a i.fa-linkedin,
+footer .d-flex a i.fa-facebook,
+.footer .d-flex a i.fa-github,
+.footer .d-flex a i.fa-twitter,
+.footer .d-flex a i.fa-instagram,
+.footer .d-flex a i.fa-discord,
+.footer .d-flex a i.fa-linkedin,
+.footer .d-flex a i.fa-facebook,
+.sns-link i.fa-github,
+.sns-link i.fa-twitter,
+.sns-link i.fa-instagram,
+.sns-link i.fa-discord,
+.sns-link i.fa-linkedin,
+.sns-link i.fa-facebook {
+  color: var(--social-icon-color) !important;
+}
+
+/* Ultra specific targeting with all classes */
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-github.fa-lg,
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-twitter.fa-lg,
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-instagram.fa-lg,
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-discord.fa-lg,
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-linkedin.fa-lg,
+footer.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-facebook.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-github.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-twitter.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-instagram.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-discord.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-linkedin.fa-lg,
+.footer .container .row .col-md-6 .d-flex.gap-3 a i.fab.fa-facebook.fa-lg {
+  color: var(--social-icon-color) !important;
+}
+
+/* Override any FontAwesome default colors for all social platforms */
+.fab.fa-github,
+.fab.fa-twitter,
+.fab.fa-instagram,
+.fab.fa-discord,
+.fab.fa-linkedin,
+.fab.fa-facebook {
+  color: inherit !important;
+}
+
+/* Force social icon color for any social media icon anywhere on the site */
+footer .fab.fa-github,
+footer .fab.fa-twitter,
+footer .fab.fa-instagram,
+footer .fab.fa-discord,
+footer .fab.fa-linkedin,
+footer .fab.fa-facebook,
+.footer .fab.fa-github,
+.footer .fab.fa-twitter,
+.footer .fab.fa-instagram,
+.footer .fab.fa-discord,
+.footer .fab.fa-linkedin,
+.footer .fab.fa-facebook,
+.sns-link .fab.fa-github,
+.sns-link .fab.fa-twitter,
+.sns-link .fab.fa-instagram,
+.sns-link .fab.fa-discord,
+.sns-link .fab.fa-linkedin,
+.sns-link .fab.fa-facebook {
+  color: var(--social-icon-color) !important;
+}

@@ -1,0 +1,57 @@
+/* PyLadies Seoul Animation Styles */
+
+/* ================================
+   HIGHLIGHTER ANIMATION
+   ================================ */
+
+@keyframes draw-highlighter {
+  0% {
+    transform: translateY(-50%) rotate(-3deg) scaleX(0);
+    background: linear-gradient(90deg, 
+      var(--highlighter-fade-end) 0%, 
+      var(--highlighter-fade-end) 100%);
+  }
+  30% {
+    transform: translateY(-50%) rotate(-2deg) scaleX(0.4);
+    background: linear-gradient(90deg, 
+      var(--highlighter-fade-mid) 0%, 
+      var(--highlighter-fade-mid) 80%, 
+      var(--highlighter-fade-light) 90%, 
+      var(--highlighter-fade-end) 100%);
+  }
+  70% {
+    transform: translateY(-50%) rotate(-3.5deg) scaleX(0.8);
+    background: linear-gradient(90deg, 
+      var(--highlighter-active) 0%, 
+      var(--highlighter-active) 80%, 
+      var(--highlighter-fade-mid) 90%, 
+      var(--highlighter-fade-end) 100%);
+  }
+  100% {
+    transform: translateY(-50%) rotate(-3deg) scaleX(1);
+    background: linear-gradient(90deg, 
+      var(--highlighter-active) 0%, 
+      var(--highlighter-active) 80%, 
+      var(--highlighter-fade-mid) 90%, 
+      var(--highlighter-fade-end) 100%);
+  }
+}
+
+/* ================================
+   ROTATION ANIMATION
+   ================================ */
+
+@keyframes rotateIn {
+  from {
+    transform: translateZ(-200px) rotateY(-180deg) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: translateZ(0) rotateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.featured-member.rotating-in {
+  animation: rotateIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}

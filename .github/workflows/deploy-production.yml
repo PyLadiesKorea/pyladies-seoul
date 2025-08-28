@@ -1,0 +1,481 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.0.0)'
+        required: true
+        type: string
+      skip_tests:
+        description: 'Skip tests (emergency deployment only)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: pyladies-seoul/production
+
+jobs:
+  pre-deployment-checks:
+    name: Pre-deployment Checks
+    runs-on: ubuntu-latest
+    if: inputs.skip_tests != true
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version || github.ref }}
+
+    - name: Run full test suite
+      uses: ./.github/workflows/ci.yml
+
+    - name: Security scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        exit-code: '1'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Validate deployment readiness
+      run: |
+        echo "🔍 Validating deployment readiness..."
+        
+        # Check if all required files exist
+        required_files=(
+          "docker-compose.prod.yml"
+          "scripts/backup.sh"
+          "scripts/migrate.sh"
+          "scripts/setup-ssl.sh"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Required file missing: $file"
+            exit 1
+          fi
+        done
+        
+        echo "✅ All required files present"
+
+  build-production-image:
+    name: Build Production Image
+    runs-on: ubuntu-latest
+    needs: pre-deployment-checks
+    if: always() && (needs.pre-deployment-checks.result == 'success' || inputs.skip_tests == true)
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version || github.ref }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=tag
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=raw,value=latest
+
+    - name: Build and push Docker image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        target: production
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          GIT_COMMIT=${{ github.sha }}
+
+    - name: Sign container image
+      run: |
+        echo "🔐 Signing container image..."
+        # Add image signing with cosign if needed
+        echo "Image: ${{ steps.meta.outputs.tags }}"
+        echo "Digest: ${{ steps.build.outputs.digest }}"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-production-image
+    environment: 
+      name: production
+      url: https://pyladiesseoul.org
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version || github.ref }}
+
+    - name: Create deployment issue
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { data: issue } = await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `🚀 Production Deployment: ${{ inputs.version || github.ref_name }}`,
+            body: `
+            ## Production Deployment
+            
+            **Version:** ${{ inputs.version || github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Triggered by:** ${{ github.actor }}
+            **Started:** ${new Date().toISOString()}
+            
+            ## Deployment Steps
+            - [ ] Pre-deployment backup
+            - [ ] Database migrations
+            - [ ] Deploy application
+            - [ ] SSL certificate check
+            - [ ] Post-deployment tests
+            - [ ] Monitoring verification
+            
+            ## Rollback Plan
+            In case of issues, rollback using:
+            \`\`\`bash
+            ./scripts/rollback.sh
+            \`\`\`
+            `,
+            labels: ['deployment', 'production']
+          });
+          
+          core.setOutput('issue_number', issue.number);
+
+    - name: Deploy to production server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.PRODUCTION_HOST }}
+        username: ${{ secrets.PRODUCTION_USER }}
+        key: ${{ secrets.PRODUCTION_SSH_KEY }}
+        port: ${{ secrets.PRODUCTION_PORT || 22 }}
+        command_timeout: 30m
+        script: |
+          set -e
+          
+          echo "🚀 Starting production deployment..."
+          echo "Version: ${{ inputs.version || github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Time: $(date)"
+          
+          # Navigate to application directory
+          cd /opt/pyladies-seoul
+          
+          # Set maintenance mode
+          echo "🔧 Enabling maintenance mode..."
+          docker-compose -f docker-compose.prod.yml exec -T nginx \
+            cp /etc/nginx/conf.d/maintenance.conf /etc/nginx/conf.d/default.conf
+          docker-compose -f docker-compose.prod.yml exec -T nginx nginx -s reload
+          
+          # Create comprehensive backup
+          echo "📦 Creating pre-deployment backup..."
+          ./scripts/backup.sh full
+          
+          # Backup current Docker images
+          echo "💾 Backing up current Docker images..."
+          docker save $(docker-compose -f docker-compose.prod.yml config --services | xargs -I {} docker-compose -f docker-compose.prod.yml images -q {}) | gzip > backups/docker-images-$(date +%Y%m%d_%H%M%S).tar.gz
+          
+          # Pull latest code
+          echo "📥 Pulling latest code..."
+          git fetch --all --tags
+          git checkout ${{ inputs.version || github.ref_name }}
+          git pull origin ${{ inputs.version || github.ref_name }}
+          
+          # Update environment variables
+          echo "🔧 Updating environment variables..."
+          export IMAGE_TAG="${{ inputs.version || github.ref_name }}"
+          export BUILD_DATE="${{ github.event.head_commit.timestamp }}"
+          export GIT_COMMIT="${{ github.sha }}"
+          
+          # Pull new Docker image
+          echo "🐳 Pulling production Docker image..."
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version || github.ref_name }}
+          
+          # Update docker-compose to use new image
+          sed -i "s|image: .*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version || github.ref_name }}|g" docker-compose.prod.yml
+          
+          # Test database migration in dry-run mode
+          echo "🧪 Testing database migrations..."
+          docker-compose -f docker-compose.prod.yml run --rm web python manage.py migrate --check --settings=config.settings.production
+          
+          # Run database migrations
+          echo "🔄 Running database migrations..."
+          ./scripts/migrate.sh --force
+          
+          # Collect static files
+          echo "📦 Collecting static files..."
+          docker-compose -f docker-compose.prod.yml run --rm web python manage.py collectstatic --noinput --settings=config.settings.production
+          
+          # Deploy with zero-downtime using blue-green strategy
+          echo "🔄 Performing blue-green deployment..."
+          
+          # Start new application containers (green)
+          docker-compose -f docker-compose.prod.yml up -d --no-deps --scale web=2 web
+          
+          # Wait for new containers to be healthy
+          echo "⏳ Waiting for new containers to be ready..."
+          timeout=300  # 5 minutes
+          count=0
+          healthy_containers=0
+          required_containers=2
+          
+          while [ $count -lt $timeout ] && [ $healthy_containers -lt $required_containers ]; do
+            healthy_containers=$(docker-compose -f docker-compose.prod.yml ps web | grep "healthy" | wc -l)
+            echo "Healthy containers: $healthy_containers/$required_containers ($count/$timeout)"
+            
+            if [ $healthy_containers -ge $required_containers ]; then
+              echo "✅ All containers are healthy!"
+              break
+            fi
+            
+            sleep 5
+            count=$((count + 5))
+          done
+          
+          if [ $healthy_containers -lt $required_containers ]; then
+            echo "❌ Not all containers became healthy, rolling back..."
+            docker-compose -f docker-compose.prod.yml logs web
+            
+            # Rollback
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml up -d
+            exit 1
+          fi
+          
+          # Update load balancer to point to new containers
+          echo "🔄 Updating load balancer..."
+          docker-compose -f docker-compose.prod.yml up -d nginx
+          
+          # Stop old containers
+          echo "🛑 Stopping old containers..."
+          docker-compose -f docker-compose.prod.yml up -d --scale web=1
+          
+          # Update all services
+          echo "🔄 Updating all services..."
+          docker-compose -f docker-compose.prod.yml up -d
+          
+          # Disable maintenance mode
+          echo "✅ Disabling maintenance mode..."
+          docker-compose -f docker-compose.prod.yml exec -T nginx \
+            cp /etc/nginx/conf.d/production.conf /etc/nginx/conf.d/default.conf
+          docker-compose -f docker-compose.prod.yml exec -T nginx nginx -s reload
+          
+          # Clean up old images
+          echo "🧹 Cleaning up old Docker images..."
+          docker image prune -f --filter "dangling=true"
+          
+          # Check SSL certificates
+          echo "🔐 Checking SSL certificates..."
+          ./scripts/setup-ssl.sh status
+          
+          echo "✅ Production deployment completed successfully!"
+
+    - name: Run comprehensive post-deployment tests
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.PRODUCTION_HOST }}
+        username: ${{ secrets.PRODUCTION_USER }}
+        key: ${{ secrets.PRODUCTION_SSH_KEY }}
+        port: ${{ secrets.PRODUCTION_PORT || 22 }}
+        script: |
+          set -e
+          
+          echo "🧪 Running comprehensive post-deployment tests..."
+          
+          cd /opt/pyladies-seoul
+          
+          # Health check
+          echo "🏥 Testing application health..."
+          if ! curl -f https://pyladiesseoul.org/health/ >/dev/null 2>&1; then
+            echo "❌ Health check failed"
+            exit 1
+          fi
+          
+          # Database connectivity and deployment checks
+          echo "🗄️ Testing database connectivity..."
+          if ! docker-compose -f docker-compose.prod.yml exec -T web python manage.py check --deploy --settings=config.settings.production; then
+            echo "❌ Django deployment check failed"
+            exit 1
+          fi
+          
+          # Static files accessibility
+          echo "📦 Testing static files..."
+          if ! curl -f -I https://pyladiesseoul.org/static/css/main.css >/dev/null 2>&1; then
+            echo "❌ Static files not accessible"
+            exit 1
+          fi
+          
+          # SSL/HTTPS functionality
+          echo "🔐 Testing SSL/HTTPS..."
+          if ! curl -f -I https://pyladiesseoul.org >/dev/null 2>&1; then
+            echo "❌ HTTPS not working"
+            exit 1
+          fi
+          
+          # Security headers check
+          echo "🛡️ Testing security headers..."
+          headers=$(curl -s -I https://pyladiesseoul.org)
+          
+          if ! echo "$headers" | grep -qi "strict-transport-security"; then
+            echo "❌ HSTS header missing"
+            exit 1
+          fi
+          
+          if ! echo "$headers" | grep -qi "x-content-type-options"; then
+            echo "❌ X-Content-Type-Options header missing"
+            exit 1
+          fi
+          
+          # Performance test
+          echo "⚡ Running basic performance test..."
+          response_time=$(curl -o /dev/null -s -w '%{time_total}' https://pyladiesseoul.org)
+          if (( $(echo "$response_time > 3.0" | bc -l) )); then
+            echo "⚠️ Warning: Response time is slow ($response_time seconds)"
+          fi
+          
+          # Database performance
+          echo "🗄️ Testing database performance..."
+          docker-compose -f docker-compose.prod.yml exec -T web python manage.py shell -c "
+          from django.db import connection
+          import time
+          start = time.time()
+          with connection.cursor() as cursor:
+              cursor.execute('SELECT 1')
+              result = cursor.fetchone()
+          duration = time.time() - start
+          print(f'Database query time: {duration:.3f}s')
+          assert duration < 1.0, 'Database query too slow'
+          "
+          
+          echo "✅ All post-deployment tests passed!"
+
+    - name: Update monitoring and alerting
+      run: |
+        echo "📊 Updating monitoring dashboards..."
+        # Add monitoring update logic here
+        
+        echo "🔔 Enabling production alerts..."
+        # Add alerting configuration here
+
+    - name: Notify stakeholders
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#production-deployments'
+        text: |
+          🚀 PRODUCTION DEPLOYMENT ${{ job.status }}!
+          
+          **Version:** ${{ inputs.version || github.ref_name }}
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          **Duration:** ${{ job.duration }}
+          
+          **Production URL:** https://pyladiesseoul.org
+          
+          ${{ job.status == 'success' && '✅ Deployment successful! 🎉' || '❌ Deployment failed! Check logs immediately.' }}
+          
+          ${{ job.status == 'failure' && '@channel - Production deployment failed, immediate attention required!' || '' }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Update deployment issue
+      if: always()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const status = '${{ job.status }}';
+          const emoji = status === 'success' ? '✅' : '❌';
+          const statusText = status === 'success' ? 'COMPLETED' : 'FAILED';
+          
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ needs.deploy-production.outputs.issue_number || 'null' }},
+            body: `${emoji} Production deployment ${statusText} at ${new Date().toISOString()}`
+          });
+          
+          if (status === 'success') {
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.deploy-production.outputs.issue_number || 'null' }},
+              state: 'closed',
+              labels: ['deployment', 'production', 'completed']
+            });
+          } else {
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.deploy-production.outputs.issue_number || 'null' }},
+              labels: ['deployment', 'production', 'failed', 'urgent']
+            });
+          }
+
+  post-deployment-monitoring:
+    name: Post-deployment Monitoring
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: success()
+    
+    steps:
+    - name: Monitor application for 10 minutes
+      run: |
+        echo "📊 Starting post-deployment monitoring..."
+        
+        # Monitor for 10 minutes
+        end_time=$(($(date +%s) + 600))
+        failed_checks=0
+        max_failures=3
+        
+        while [ $(date +%s) -lt $end_time ]; do
+          echo "🔍 Checking application health..."
+          
+          if ! curl -f -s https://pyladiesseoul.org/health/ >/dev/null; then
+            failed_checks=$((failed_checks + 1))
+            echo "⚠️ Health check failed ($failed_checks/$max_failures)"
+            
+            if [ $failed_checks -ge $max_failures ]; then
+              echo "❌ Too many failed health checks, triggering alert!"
+              exit 1
+            fi
+          else
+            echo "✅ Health check passed"
+            failed_checks=0
+          fi
+          
+          sleep 60  # Check every minute
+        done
+        
+        echo "✅ Post-deployment monitoring completed successfully!"

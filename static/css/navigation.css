@@ -1,0 +1,288 @@
+/* PyLadies Seoul Navigation Styles */
+
+/* ================================
+   LANGUAGE SELECTOR
+   ================================ */
+
+/* Desktop Language Selector */
+.language-selector {
+  position: relative !important;
+}
+
+.language-selector .dropdown-menu,
+.language-selector .dropdown-menu.show,
+.language-selector .dropdown-menu[data-bs-popper],
+.language-selector ul.dropdown-menu,
+.language-selector .dropdown-menu.show[data-bs-popper],
+.language-selector .dropdown-menu.show[style],
+.language-selector .dropdown-menu[style][data-bs-popper] {
+  position: absolute !important;
+  top: calc(100% + 2px) !important;
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+  min-width: 60px !important;
+  margin: 0 !important;
+  inset: auto !important;
+  --bs-position: static !important;
+  background-color: var(--white-overlay-95) !important;
+  border: 1px solid var(--border-color-light) !important;
+  border-radius: var(--border-radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 0.25rem 0 !important;
+  max-width: 80px !important;
+  font-size: var(--font-size-xs) !important;
+  z-index: 1050 !important;
+}
+
+/* Bootstrap Popper.js override */
+.dropdown-menu[data-bs-popper],
+.dropdown-menu[style],
+.dropdown-menu.show[data-bs-popper],
+.dropdown-menu.show[style],
+.dropdown-menu[style][data-bs-popper],
+.language-selector .dropdown-menu,
+.language-selector .dropdown-menu.show,
+.language-selector .dropdown-menu[data-bs-popper],
+.language-selector .dropdown-menu[style] {
+  left: auto !important;
+  right: 0 !important;
+  top: calc(100% + 2px) !important;
+  transform: none !important;
+  position: absolute !important;
+  z-index: 1050 !important;
+}
+
+/* Force override for any Bootstrap dropdown positioning */
+body .language-selector .dropdown-menu,
+body .language-selector .dropdown-menu.show,
+body .language-selector .dropdown-menu[data-bs-popper],
+body .language-selector .dropdown-menu[style] {
+  position: absolute !important;
+  top: calc(100% + 2px) !important;
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+  inset: auto !important;
+  --bs-position: static !important;
+  z-index: 1050 !important;
+}
+
+/* Additional force overrides */
+.language-selector .dropdown-menu {
+  position: absolute !important;
+  top: calc(100% + 2px) !important;
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+  inset: auto !important;
+  --bs-position: static !important;
+  z-index: 1050 !important;
+}
+
+/* Language selector items */
+.language-selector .dropdown-item {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  color: inherit;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  background: var(--bg-primary);
+  transition: var(--transition-base);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.language-selector .dropdown-item::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 8px;
+  right: 8px;
+  height: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border-radius: 2px;
+  z-index: -1;
+  transition: var(--transition-base);
+  transform-origin: left center;
+}
+
+.language-selector .dropdown-item:hover {
+  color: inherit;
+  border: none;
+  background: var(--bg-primary);
+}
+
+.language-selector .dropdown-item:hover::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-hover) 0%, 
+    var(--highlighter-hover) 80%, 
+    var(--highlighter-shadow) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateY(-50%) rotate(-3deg);
+  animation: draw-highlighter 0.25s ease-out forwards;
+}
+
+.language-selector .dropdown-item.active {
+  color: inherit;
+  border: none;
+  background: var(--bg-primary);
+}
+
+.language-selector .dropdown-item.active::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-active) 0%, 
+    var(--highlighter-active) 80%, 
+    var(--highlighter-fade-mid) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateY(-50%) rotate(-4deg);
+  box-shadow: var(--shadow-md) var(--highlighter-shadow);
+}
+
+/* Language toggle button */
+.language-toggle {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 6px 12px;
+  margin: 4px 0;
+  cursor: pointer;
+  transition: var(--transition-base);
+  position: relative;
+  z-index: 2;
+}
+
+.language-toggle::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 4px;
+  right: -2px;
+  height: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border-radius: 2px;
+  z-index: -1;
+  transition: var(--transition-base);
+  transform-origin: left center;
+}
+
+.language-toggle:hover {
+  color: inherit;
+}
+
+.language-toggle:hover::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-hover) 0%, 
+    var(--highlighter-hover) 80%, 
+    var(--highlighter-shadow) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateY(-50%) rotate(-3deg);
+  animation: draw-highlighter 0.25s ease-out forwards;
+}
+
+/* Language form */
+.language-form {
+  margin: 0 !important;
+}
+
+/* Mobile Language Selector */
+.language-selector-mobile {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.language-selector-mobile .language-btn {
+  color: var(--color-text-light);
+  text-decoration: none;
+  padding: 6px 12px;
+  font-size: var(--font-size-base);
+  border: none;
+  background: none;
+  position: relative;
+  font-family: var(--font-primary);
+  z-index: 2;
+}
+
+.language-selector-mobile .language-btn.active {
+  color: var(--color-text-light);
+  font-weight: bold;
+}
+
+.language-selector-mobile .language-btn:hover {
+  color: var(--color-text-light);
+}
+
+/* ================================
+   NAVIGATION
+   ================================ */
+
+.navbar .navbar-brand {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.navbar .navbar-nav .nav-item {
+  margin: 0 var(--spacing-md);
+}
+
+.navbar .navbar-nav .nav-link {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  position: relative;
+  padding: 6px 12px;
+  margin: 4px 0;
+  transition: var(--transition-base);
+  z-index: 2;
+  color: inherit;
+  font-weight: 500;
+}
+
+.navbar .navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 4px;
+  right: -2px;
+  height: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border-radius: 2px;
+  z-index: -1;
+  transition: var(--transition-base);
+  transform-origin: left center;
+}
+
+.navbar .navbar-nav .nav-link.active::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-active) 0%, 
+    var(--highlighter-active) 80%, 
+    var(--highlighter-fade-mid) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateY(-50%) rotate(-4deg);
+  box-shadow: var(--shadow-md) var(--highlighter-shadow);
+}
+
+.navbar .navbar-nav .nav-link:not(.active)::after {
+  transform: translateY(-50%) rotate(-3deg) scaleX(0);
+  transform-origin: left center;
+}
+
+.navbar .navbar-nav .nav-link:not(.active):hover::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-active) 0%, 
+    var(--highlighter-active) 80%, 
+    var(--highlighter-fade-mid) 90%, 
+    var(--highlighter-fade-end) 100%);
+  animation: draw-highlighter 0.25s ease-out forwards;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+  color: inherit;
+}

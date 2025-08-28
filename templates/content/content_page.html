@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags content_tags %}
+
+{% block title %}{{ page.title }} - PyLadies Seoul{% endblock %}
+
+{% block meta_description %}{{ page.meta_description|default:page.title }}{% endblock %}
+
+{% block content %}
+    <main class="py-5" role="main">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Page Header -->
+                    <header class="mb-4">
+                        <!-- Breadcrumb -->
+                        {% with breadcrumb_items=breadcrumb_items|default:"[{'url': category.url, 'title': category.title}]" %}
+                            {% include "components/breadcrumb.html" with items=breadcrumb_items %}
+                        {% endwith %}
+                        
+                        <!-- Content Type Badge -->
+                        {% include "components/content_type_badge.html" with content=page %}
+                        
+                        <h1 class="display-6 fw-bold mb-3">{{ page.title }}</h1>
+                        
+                        <!-- Meta Information -->
+                        {% include "components/content_meta.html" with content=page %}
+                        
+                        <!-- Event Specific Info -->
+                        {% include "components/event_info_alert.html" with event=page %}
+                        
+                        <!-- Interview Specific Info -->
+                        {% include "components/interview_info.html" with interview=page %}
+                        
+                        <!-- Tags -->
+                        {% if page.tags.all %}
+                            <div class="mb-4">
+                                {% for tag in page.tags.all %}
+                                    <a href="{{ category.url }}?tag={{ tag.name }}" class="badge bg-secondary text-decoration-none me-1">
+                                        {{ tag.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </header>
+                    
+                    <!-- Content Body -->
+                    <section class="content-body" aria-labelledby="content-title">
+                        <h2 id="content-title" class="visually-hidden">Content</h2>
+                        {% for block in page.body %}
+                            {% include_block block %}
+                        {% endfor %}
+                    </section>
+                    
+                    <!-- Social Share -->
+                    <section class="border-top pt-4 mt-5" aria-labelledby="share-heading">
+                        <h6 id="share-heading">Share this content:</h6>
+                        {% include "components/social_share_buttons.html" with url=request.build_absolute_uri title=page.title %}
+                    </section>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    {% include "components/sidebar.html" with related_content=related_content category=category %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/content_page.js' %}"></script>
+<script>
+// Pass page ID to the external script
+document.addEventListener('DOMContentLoaded', function() {
+    // Add page ID as data attribute to body or create a global variable
+    document.body.setAttribute('data-page-id', '{{ page.id }}');
+});
+</script>
+{% endblock %}

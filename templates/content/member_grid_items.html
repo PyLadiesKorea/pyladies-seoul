@@ -1,0 +1,39 @@
+{% load wagtailimages_tags %}
+
+{% for member in members %}
+<div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+    <div class="member-card">
+        <div class="member-badge">
+            <div class="badge-circle">
+                {% if member.photo %}
+                    {% image member.photo fill-200x200 as photo %}
+                    <img src="{{ photo.url }}" alt="{{ member.name }}">
+                {% else %}
+                    <div class="default-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="laurel-wreath">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left laurel branch -->
+                    <path d="M50 100 Q30 80, 40 60 T50 40 Q35 35, 45 25 T55 20 Q40 15, 50 5 T60 10" 
+                          fill="none" stroke="#333" stroke-width="2"/>
+                    <!-- Right laurel branch -->
+                    <path d="M150 100 Q170 80, 160 60 T150 40 Q165 35, 155 25 T145 20 Q160 15, 150 5 T140 10" 
+                          fill="none" stroke="#333" stroke-width="2"/>
+                </svg>
+            </div>
+        </div>
+        <div class="member-details">
+            <h4>{{ member.name }}</h4>
+            {% if member.role %}
+                <p class="role">{{ member.role }}</p>
+            {% endif %}
+            {% if member.intro %}
+                <p class="intro">"{{ member.intro|truncatechars:60 }}"</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}

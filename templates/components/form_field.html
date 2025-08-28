@@ -1,0 +1,25 @@
+{% comment %}
+Form Field Component
+Usage: {% include "components/form_field.html" with field_name="name" label="Name" type="text" required=True %}
+{% endcomment %}
+
+<div class="mb-3">
+    <label for="id_{{ field_name }}" class="form-label">
+        {{ label }} {% if required %}*{% endif %}
+    </label>
+    
+    {% if type == 'textarea' %}
+        <textarea class="form-control" id="id_{{ field_name }}" name="{{ field_name }}" 
+                  rows="{{ rows|default:5 }}" {% if required %}required{% endif %}>{{ field_value|default:'' }}</textarea>
+    {% else %}
+        <input type="{{ type|default:'text' }}" class="form-control" id="id_{{ field_name }}" 
+               name="{{ field_name }}" value="{{ field_value|default:'' }}" 
+               {% if required %}required{% endif %}>
+    {% endif %}
+    
+    {% if field_error %}
+        <div class="invalid-feedback d-block">
+            {{ field_error }}
+        </div>
+    {% endif %}
+</div>

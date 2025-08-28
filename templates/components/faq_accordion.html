@@ -1,0 +1,26 @@
+{% comment %}
+FAQ Accordion Component
+Usage: {% include "components/faq_accordion.html" with faq_pages=faq_pages %}
+{% endcomment %}
+
+{% if faq_pages %}
+    <div class="faq-list">
+        {% for faq in faq_pages %}
+        <div class="faq-item">
+            <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq-{{ forloop.counter }}" aria-expanded="false">
+                <h4>{{ faq.question }}</h4>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer collapse" id="faq-{{ forloop.counter }}">
+                <div class="faq-content-body">
+                    {{ faq.answer|linebreaks }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="faq-empty">
+        <p>FAQ가 준비 중입니다. 궁금한 점이 있으시면 언제든 연락해주세요!</p>
+    </div>
+{% endif %}

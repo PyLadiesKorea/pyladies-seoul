@@ -1,0 +1,78 @@
+{% comment %}
+Social Share Buttons Component
+
+사용법:
+{% include "components/social_share_buttons.html" with url=request.build_absolute_uri title=page.title %}
+
+매개변수:
+- url: 공유할 URL (필수)
+- title: 공유할 제목 (필수)
+- platforms: 공유할 플랫폼 리스트 (기본값: ["twitter", "facebook", "linkedin"])
+- size: 버튼 크기 - "sm", "md", "lg" (기본값: "sm")
+- class: 추가 CSS 클래스 (선택)
+{% endcomment %}
+
+{% if not platforms %}
+    {% with platforms="twitter,facebook,linkedin"|split:"," %}
+{% endif %}
+
+<div class="social-share-buttons {{ class|default:'' }}">
+    {% if "twitter" in platforms %}
+        <a href="https://twitter.com/intent/tweet?url={{ url|urlencode }}&text={{ title|urlencode }}" 
+           class="btn btn-outline-primary btn-{{ size|default:'sm' }}" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Share on Twitter">
+            <i class="fab fa-twitter" aria-hidden="true"></i> 
+            <span class="d-none d-sm-inline">Twitter</span>
+        </a>
+    {% endif %}
+    
+    {% if "facebook" in platforms %}
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ url|urlencode }}" 
+           class="btn btn-outline-primary btn-{{ size|default:'sm' }}" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Share on Facebook">
+            <i class="fab fa-facebook" aria-hidden="true"></i> 
+            <span class="d-none d-sm-inline">Facebook</span>
+        </a>
+    {% endif %}
+    
+    {% if "linkedin" in platforms %}
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url|urlencode }}" 
+           class="btn btn-outline-primary btn-{{ size|default:'sm' }}" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Share on LinkedIn">
+            <i class="fab fa-linkedin" aria-hidden="true"></i> 
+            <span class="d-none d-sm-inline">LinkedIn</span>
+        </a>
+    {% endif %}
+    
+    {% if "telegram" in platforms %}
+        <a href="https://t.me/share/url?url={{ url|urlencode }}&text={{ title|urlencode }}" 
+           class="btn btn-outline-primary btn-{{ size|default:'sm' }}" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Share on Telegram">
+            <i class="fab fa-telegram" aria-hidden="true"></i> 
+            <span class="d-none d-sm-inline">Telegram</span>
+        </a>
+    {% endif %}
+    
+    {% if "copy" in platforms %}
+        <button type="button" 
+                class="btn btn-outline-secondary btn-{{ size|default:'sm' }} copy-url-btn"
+                data-url="{{ url }}"
+                aria-label="Copy URL to clipboard">
+            <i class="fas fa-link" aria-hidden="true"></i> 
+            <span class="d-none d-sm-inline">Copy URL</span>
+        </button>
+    {% endif %}
+</div>
+
+{% if not platforms %}
+    {% endwith %}
+{% endif %}
+

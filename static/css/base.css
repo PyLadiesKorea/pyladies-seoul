@@ -1,0 +1,631 @@
+/* PyLadies Seoul Base Styles */
+
+@font-face {
+  font-family: 'YEONGJUPunggiGinseng';
+  src: url('../fonts/younjoo-foongi-insam/YEONGJUPunggiGinseng.otf') format('opentype'),
+       url('../fonts/younjoo-foongi-insam/YEONGJUPunggiGinseng.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: fallback;
+  unicode-range: U+AC00-D7AF, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
+/* Global font setup */
+* {
+  font-family: var(--font-primary);
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--pyladies-dark);
+}
+
+/* ================================
+   TYPOGRAPHY
+   ================================ */
+
+h1, .h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+h2, .h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin-bottom: 0.875rem;
+  color: var(--color-text-primary);
+}
+
+h3, .h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  line-height: var(--line-height-normal);
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+h4, .h4 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: var(--line-height-normal);
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+h5, .h5 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-normal);
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+h6, .h6 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: var(--line-height-normal);
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+p {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lead {
+  font-size: var(--font-size-lg);
+  font-weight: 300;
+  line-height: var(--line-height-relaxed);
+}
+
+.display-1 { font-size: var(--font-size-5xl); }
+.display-2 { font-size: var(--font-size-4xl); }
+.display-3 { font-size: var(--font-size-3xl); }
+.display-4 { font-size: var(--font-size-3xl) !important; }
+.display-5 { font-size: var(--font-size-3xl) !important; }
+
+/* Section Titles */
+.section-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--color-text-primary);
+}
+
+.page-title {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-primary);
+}
+
+/* Bootstrap Container Override - Force centering */
+.container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  width: 100% !important;
+}
+
+/* Ensure all containers are centered */
+.container-fluid {
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+/* Content-specific containers for better centering */
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.content-container-wide {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Center all sections - only apply basic centering */
+section {
+  width: 100%;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+/* Allow sections to opt out if needed */
+section.no-center {
+  text-align: left;
+}
+
+section.flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero sections */
+.hero-section,
+.about-hero,
+.connect-hero {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+/* Better spacing for content sections */
+.py-5 {
+  padding: 3rem 0 !important;
+}
+
+/* Text alignment utilities */
+.text-center-section {
+  text-align: center;
+}
+
+.text-center-section h1,
+.text-center-section h2,
+.text-center-section h3,
+.text-center-section h4,
+.text-center-section h5,
+.text-center-section h6 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-center-section p {
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cards and grid content centering - more selective */
+.container .row {
+  justify-content: center;
+}
+
+.card-centered {
+  margin: 0 auto;
+}
+
+/* Better container alignment */
+.container > .row {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Content wrapper for better centering */
+.content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.content-wrapper-narrow {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Override Bootstrap's text alignment for consistency */
+.container {
+  text-align: center !important;
+}
+
+/* Force all major layout elements to center */
+main,
+.main,
+article,
+.article {
+  text-align: center !important;
+}
+
+/* Override Bootstrap text utilities */
+.text-start,
+.text-left {
+  text-align: center !important;
+}
+
+/* Only allow specific elements to be left-aligned when needed */
+.container .row {
+  text-align: center; /* Changed from left to center */
+  justify-content: center !important;
+}
+
+/* Grid items should still be centered */
+[class*="col-"] {
+  text-align: center !important;
+}
+
+/* Cards should be centered */
+.card,
+.card-body {
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+.text-left-override {
+  text-align: left !important;
+}
+
+/* Content that should remain left-aligned for readability */
+.about-content-body,
+.content-body,
+.blog-content,
+.article-content {
+  text-align: left !important;
+}
+
+.about-content-body p,
+.content-body p,
+.blog-content p,
+.article-content p {
+  text-align: left !important;
+}
+
+/* CoC content should be centered when it's just placeholder text */
+.coc-content {
+  text-align: center !important;
+}
+
+.coc-content p {
+  text-align: center !important;
+}
+
+/* But lists within content should be left-aligned with proper indentation */
+.about-content-body ul,
+.about-content-body ol,
+.coc-content ul,
+.coc-content ol,
+.content-body ul,
+.content-body ol {
+  text-align: left !important;
+  padding-left: 2rem !important;
+}
+
+.about-content-body li,
+.coc-content li,
+.content-body li {
+  text-align: left !important;
+  list-style-position: outside !important;
+}
+
+/* Consistent section spacing */
+.section-spacing {
+  padding: 4rem 0;
+}
+
+.section-spacing-sm {
+  padding: 2rem 0;
+}
+
+.section-spacing-lg {
+  padding: 6rem 0;
+}
+
+/* Typography utilities */
+.text-balanced {
+  text-wrap: balance;
+}
+
+.content-max-width {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-max-width-narrow {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-max-width-wide {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Force centering on Bootstrap utilities and components */
+.d-flex {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.d-flex.justify-content-start,
+.d-flex.justify-content-left {
+  justify-content: center !important;
+}
+
+/* Force center all navigation and menu items */
+.navbar-nav,
+.nav,
+.nav-pills,
+.nav-tabs {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.navbar-nav .nav-link,
+.nav-link {
+  text-align: center !important;
+}
+
+/* Lists should be centered */
+ul, ol {
+  text-align: center !important;
+}
+
+ul li, ol li {
+  list-style-position: inside;
+}
+
+/* Forms should be centered */
+.form-group,
+.form-control,
+.form-select,
+.form-check {
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+/* Table content centering */
+table, .table {
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+.table td, .table th {
+  text-align: center !important;
+}
+
+/* Consistent button sizes */
+.btn {
+  font-size: var(--font-size-base);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-base);
+  margin: 0 auto !important;
+  display: inline-block !important;
+}
+
+.btn-lg {
+  font-size: var(--font-size-lg);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius-lg);
+}
+
+.btn-sm {
+  font-size: var(--font-size-sm);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Force all placeholder, empty state, and fallback text to center */
+p:contains("will be available soon"),
+p:contains("Coming soon"),
+p:contains("No items"),
+p:contains("Empty"),
+.placeholder,
+.placeholder-text,
+.empty-state,
+.fallback-text,
+.no-content,
+.coming-soon {
+  text-align: center !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Override any left-aligned text in empty states */
+.contribute-empty,
+.events-empty,
+.members-empty,
+.content-empty {
+  text-align: center !important;
+}
+
+/* Ensure consistent font sizes for all headings */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* All Bootstrap display classes should be centered */
+.display-1, .display-2, .display-3, .display-4, .display-5 {
+  text-align: center !important;
+}
+
+/* Section titles specifically - all should be same size as Connect */
+.section-title,
+.page-title,
+.content-title,
+.about-title,
+.connect-title,
+.members-title,
+.events-title {
+  font-size: var(--font-size-3xl) !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Force all main page titles to be consistent - VERY SPECIFIC */
+h1.display-4.fw-bold,
+h2.display-5.fw-bold,
+h1.about-title,
+h1.connect-title,
+.display-4.fw-bold,
+.display-5.fw-bold,
+h1:contains("PyLadies This Month"),
+h2:contains("All the PyLadies are") {
+  font-size: var(--font-size-3xl) !important;
+}
+
+/* Additional backup selectors */
+.featured-members-section h1,
+.all-members-section h2,
+.connect-hero h1,
+.about-hero h1 {
+  font-size: var(--font-size-3xl) !important;
+}
+
+/* Font Awesome icons protection */
+.fa, .fas, .far, .fab, .fal, [class*="fa-"] {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+}
+
+/* Navbar styling - High specificity */
+.navbar,
+.navbar.navbar-light,
+nav.navbar,
+body .navbar,
+body .navbar.navbar-light,
+body nav.navbar {
+  background-color: var(--bg-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+main {
+  background-color: var(--bg-primary);
+}
+
+/* ================================
+   BACKGROUND OVERRIDES
+   ================================ */
+
+/* Global background color override - High specificity */
+html,
+body,
+body.container,
+body.container-fluid,
+body .row,
+body .col,
+body [class*="col-"],
+body section,
+body article,
+body main,
+body .py-5,
+body .py-4,
+body .border-bottom,
+body .hero-section,
+body .past-events {
+  background-color: var(--bg-primary);
+}
+
+/* Override Bootstrap background classes - High specificity */
+.bg-light,
+.bg-white,
+.bg-primary,
+.bg-secondary,
+body .bg-light,
+body .bg-white,
+body .bg-primary,
+body .bg-secondary {
+  background-color: var(--bg-primary) !important;
+}
+
+/* Page-specific background overrides */
+.about-page,
+.connect-page,
+.featured-members-section {
+  background-color: var(--bg-primary);
+}
+
+/* Component background overrides */
+.about-main-content,
+.coc-content,
+.contribute-card,
+.faq-content,
+.member-card,
+.organizer-card {
+  background-color: var(--bg-component);
+}
+
+/* Card and component backgrounds */
+.card:not(.bg-light):not(.bg-white),
+.dropdown-menu,
+.btn,
+.badge:not(.bg-light),
+.navbar,
+.language-selector *,
+.pagination .page-link,
+.form-control {
+  background-color: var(--bg-component);
+}
+
+.bg-light.card,
+.bg-white.card {
+  background-color: var(--bg-component-light);
+}
+
+/* Footer specific override */
+.footer {
+  background-color: var(--bg-primary);
+  color: var(--pyladies-dark);
+  margin-top: auto;
+}
+
+
+/* Korean text styling */
+.korean-text {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ================================
+   DARK THEME NAVIGATION
+   ================================ */
+
+/* Dark theme navbar brand (logo) */
+[data-theme="dark"] .navbar-brand,
+[data-theme="dark"] .navbar-brand.fw-bold.text-dark {
+  color: var(--color-text-white) !important;
+}
+
+[data-theme="dark"] .navbar-brand:hover {
+  color: var(--brand-red) !important;
+}
+
+/* Dark theme navigation links */
+[data-theme="dark"] .nav-link {
+  color: var(--color-text-white) !important;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+  color: var(--brand-red) !important;
+}
+
+/* Dark theme language selector */
+[data-theme="dark"] .language-toggle {
+  color: var(--color-text-white) !important;
+}
+
+[data-theme="dark"] .language-btn {
+  color: var(--color-text-white) !important;
+}
+
+[data-theme="dark"] .language-btn:hover {
+  color: var(--brand-red) !important;
+}

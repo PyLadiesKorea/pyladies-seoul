@@ -1,0 +1,102 @@
+{% comment %}
+Sidebar Component
+
+사용법:
+{% include "components/sidebar.html" with related_content=related_content category=category %}
+
+매개변수:
+- related_content: 관련 콘텐츠 리스트 (선택)
+- category: 카테고리 객체 (선택)
+- show_related: 관련 콘텐츠 표시 여부 (기본값: True)
+- show_category: 카테고리 정보 표시 여부 (기본값: True)
+- show_quick_actions: 빠른 액션 표시 여부 (기본값: True)
+- class: 추가 CSS 클래스 (선택)
+{% endcomment %}
+
+<aside class="position-sticky sidebar-sticky {{ class|default:'' }}" role="complementary" aria-label="Page sidebar">
+    
+    <!-- Related Content -->
+    {% if show_related and related_content %}
+        <section class="card mb-4" aria-labelledby="related-content-heading">
+            <header class="card-header">
+                <h6 class="mb-0" id="related-content-heading">
+                    <i class="fas fa-link" aria-hidden="true"></i> 
+                    Related Content
+                </h6>
+            </header>
+            <nav class="list-group list-group-flush" aria-label="Related content links">
+                {% for related in related_content %}
+                    <a href="{{ related.url }}" 
+                       class="list-group-item list-group-item-action"
+                       aria-label="View {{ related.title }}">
+                        <div class="fw-bold">{{ related.title }}</div>
+                        <time datetime="{{ related.publication_date|date:'Y-m-d' }}" class="text-muted small">
+                            {{ related.publication_date|date:"Y.m.d" }}
+                        </time>
+                    </a>
+                {% endfor %}
+            </nav>
+        </section>
+    {% endif %}
+    
+    <!-- Category Info -->
+    {% if show_category and category %}
+        <section class="card mb-4" aria-labelledby="category-info-heading">
+            <header class="card-header">
+                <h6 class="mb-0" id="category-info-heading">
+                    <i class="fas fa-folder" aria-hidden="true"></i> 
+                    Category
+                </h6>
+            </header>
+            <div class="card-body">
+                <p class="mb-2">
+                    <a href="{{ category.url }}" 
+                       class="text-decoration-none fw-bold">
+                        {{ category.title }}
+                    </a>
+                </p>
+                {% if category.intro %}
+                    <small class="text-muted">
+                        {{ category.intro|striptags|truncatechars:100 }}
+                    </small>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+    
+    <!-- Quick Actions -->
+    {% if show_quick_actions %}
+        <section class="card" aria-labelledby="quick-actions-heading">
+            <header class="card-header">
+                <h6 class="mb-0" id="quick-actions-heading">
+                    <i class="fas fa-tools" aria-hidden="true"></i> 
+                    Quick Actions
+                </h6>
+            </header>
+            <nav class="card-body d-grid gap-2" aria-label="Quick action links">
+                {% if category %}
+                    <a href="{{ category.url }}" 
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> 
+                        Back to {{ category.title }}
+                    </a>
+                {% endif %}
+                <a href="/contact/" 
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-envelope" aria-hidden="true"></i> 
+                    Contact Us
+                </a>
+                <a href="/members/" 
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-users" aria-hidden="true"></i> 
+                    Meet Our Members
+                </a>
+                <a href="/events/" 
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-calendar" aria-hidden="true"></i> 
+                    View Events
+                </a>
+            </nav>
+        </section>
+    {% endif %}
+</aside>

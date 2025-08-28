@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block title %}{{ member.name }} - PyLadies Seoul{% endblock %}
+
+{% block meta_description %}{{ member.bio|striptags|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+    <div class="py-5">
+        <div class="container">
+            <!-- Breadcrumb -->
+            {% with breadcrumb_items=breadcrumb_items|default:"[{'url': '/members/', 'title': 'Members'}, {'url': '', 'title': member.name}]" %}
+                {% include "components/breadcrumb.html" with items=breadcrumb_items %}
+            {% endwith %}
+            
+            <div class="row">
+                <!-- Main Profile -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    {% include "components/member_avatar.html" with member=member size="120" class="rounded-circle member-detail-avatar" %}
+                                    {% include "components/member_badge.html" with member=member %}
+                                </div>
+                                
+                                <div class="col-md-9">
+                                    <h1 class="h2 mb-2">{{ member.name }}</h1>
+                                    
+                                    {% if member.role %}
+                                        <p class="text-muted lead mb-3">{{ member.role }}</p>
+                                    {% endif %}
+                                    
+                                    {% if member.bio %}
+                                        <div class="mb-4">
+                                            {{ member.bio|richtext }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Contact Info -->
+                                    {% if member.email %}
+                                        <div class="mb-3">
+                                            <i class="fas fa-envelope text-muted"></i>
+                                            <a href="mailto:{{ member.email }}" class="text-decoration-none ms-2">
+                                                {{ member.email }}
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Social Links -->
+                                    {% include "components/social_links.html" with member=member %}
+                                    
+                                    <!-- Skills/Tags -->
+                                    {% include "components/tags.html" with tags=member.tags.all title="Skills & Interests" %}
+                                    
+                                    {% if member.joined_date %}
+                                        <div class="text-muted">
+                                            <small>
+                                                <i class="fas fa-calendar-alt"></i>
+                                                PyLadies Seoul member since {{ member.joined_date|date:"Y년 m월" }}
+                                            </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Related Content -->
+                    {% if related_content %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-newspaper"></i> 
+                                Content by {{ member.name }}
+                            </h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for content in related_content %}
+                            <div class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="mb-1">
+                                            <a href="{{ content.url }}" class="text-decoration-none">
+                                                {{ content.title }}
+                                            </a>
+                                        </h6>
+                                        
+                                        {% if content.is_event %}
+                                            <small class="text-success">
+                                                <i class="fas fa-calendar"></i> Event
+                                            </small>
+                                        {% elif content.is_interview %}
+                                            <small class="text-dark">
+                                                <i class="fas fa-microphone"></i> Interview
+                                            </small>
+                                        {% endif %}
+                                        
+                                        <small class="text-muted ms-2">
+                                            {{ content.publication_date|date:"Y.m.d" }}
+                                        </small>
+                                        
+                                        {% if content.meta_description %}
+                                            <p class="mb-1 small text-muted">
+                                                {{ content.meta_description|truncatechars:100 }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if content.view_count %}
+                                    <div class="col-auto">
+                                        <small class="text-muted">
+                                            <i class="fas fa-eye"></i> {{ content.view_count }}
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="position-sticky sidebar-sticky">
+                        
+                        <!-- Actions -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-tools"></i> Actions</h6>
+                            </div>
+                            <div class="card-body d-grid gap-2">
+                                <a href="/members/" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-arrow-left"></i> Back to Members
+                                </a>
+                                {% if member.email %}
+                                    <a href="mailto:{{ member.email }}" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-envelope"></i> Send Email
+                                    </a>
+                                {% endif %}
+                                <a href="/contact/" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-question-circle"></i> General Contact
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Other Members -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-users"></i> 
+                                    {% if member.member_type == 'organizer' %}Other Organizers{% else %}Other Members{% endif %}
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <a href="/members/?type={{ member.member_type }}" class="btn btn-outline-primary btn-sm">
+                                        View All 
+                                        {% if member.member_type == 'organizer' %}Organizers{% else %}Members{% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/member_detail.js' %}"></script>
+{% endblock %}

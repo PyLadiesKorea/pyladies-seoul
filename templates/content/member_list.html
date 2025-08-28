@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static wagtailimages_tags %}
+
+{% block title %}Members - PyLadies Seoul{% endblock %}
+
+{% block content %}
+    <!-- Featured Members Section (PyLadies This Month) -->
+    <section class="featured-members-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold mb-5">PyLadies This Month</h1>
+                </div>
+            </div>
+            
+            <!-- Rotating Featured Members Display -->
+            <div class="featured-members-container">
+                <div class="featured-members-wrapper">
+                    {% for member in featured_members %}
+                    <div class="featured-member {% if forloop.first %}active{% else %}back-{{ forloop.counter0 }}{% endif %}" data-index="{{ forloop.counter0 }}">
+                        <div class="member-circle">
+                            {% include "components/member_avatar.html" with member=member size="300" class="" %}
+                        </div>
+                        <div class="member-info">
+                            <h3>{{ member.name }}</h3>
+                            {% if member.role %}
+                                <p class="member-role">{{ member.role }}</p>
+                            {% endif %}
+                            {% if member.intro %}
+                                <p class="member-intro">"{{ member.intro }}"</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Members Section -->
+    <section class="all-members-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="display-5 fw-bold">All the PyLadies are...</h2>
+                </div>
+            </div>
+            
+            <!-- Members Grid -->
+            <div class="row members-grid">
+                {% for member in members %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="member-card">
+                        <div class="member-badge">
+                            <div class="badge-circle">
+                                {% include "components/member_avatar.html" with member=member size="200" class="" %}
+                            </div>
+                            <div class="laurel-wreath">
+                                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Left laurel branch -->
+                                    <path d="M50 100 Q30 80, 40 60 T50 40 Q35 35, 45 25 T55 20 Q40 15, 50 5 T60 10" 
+                                          fill="none" stroke="#333" stroke-width="2"/>
+                                    <!-- Right laurel branch -->
+                                    <path d="M150 100 Q170 80, 160 60 T150 40 Q165 35, 155 25 T145 20 Q160 15, 150 5 T140 10" 
+                                          fill="none" stroke="#333" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="member-details">
+                            <h4>{{ member.name }}</h4>
+                            {% if member.role %}
+                                <p class="role">{{ member.role }}</p>
+                            {% endif %}
+                            {% if member.intro %}
+                                <p class="intro">"{{ member.intro|truncatechars:60 }}"</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Load More Button -->
+            {% if has_more %}
+            <div class="row">
+                <div class="col-12 text-center mt-4">
+                    <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                        Load More PyLadies
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/member_list.js' %}"></script>
+{% endblock %}

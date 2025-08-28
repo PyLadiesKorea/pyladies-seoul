@@ -1,0 +1,115 @@
+/* PyLadies Seoul Component Styles */
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.btn {
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--pyladies-primary);
+  border: 2px solid var(--pyladies-primary);
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: var(--brand-red-dark);
+  border: 2px solid var(--brand-red-dark);
+}
+
+.btn-outline-primary {
+  border-color: var(--pyladies-primary);
+  color: var(--pyladies-primary);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+  background-color: var(--pyladies-primary);
+  border-color: var(--pyladies-primary);
+}
+
+/* ================================
+   CARDS
+   ================================ */
+
+.card {
+  border: 1px solid var(--border-color-light);
+  background-color: var(--white-overlay-80);
+  color: var(--pyladies-dark);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background-color: var(--white-overlay-95);
+  border-color: var(--pyladies-primary);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ================================
+   UTILITIES
+   ================================ */
+
+.text-primary {
+  color: var(--pyladies-primary);
+}
+
+.bg-primary {
+  background: var(--gradient-primary);
+}
+
+/* ================================
+   SEARCH RESULTS
+   ================================ */
+
+.results-container .card {
+  transition: transform 0.2s;
+}
+
+.results-container .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ================================
+   MEMBER AVATARS
+   ================================ */
+
+.member-avatar {
+  object-fit: cover;
+}
+
+.member-avatar-placeholder {
+  width: 60px;
+  height: 60px;
+}
+
+/* Member detail avatars */
+.member-detail-avatar {
+  object-fit: cover;
+}
+
+.member-detail-avatar-placeholder {
+  width: 120px;
+  height: 120px;
+}
+
+/* ================================
+   SIDEBAR
+   ================================ */
+
+.sidebar-sticky {
+  top: 2rem;
+}
+
+/* ================================
+   HERO ELEMENTS
+   ================================ */
+
+.hero-python-icon {
+  font-size: var(--font-size-hero-icon, 12rem);
+  opacity: 0.3;
+}

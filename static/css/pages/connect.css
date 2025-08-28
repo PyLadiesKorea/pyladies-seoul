@@ -1,0 +1,287 @@
+/* PyLadies Seoul Connect Page Styles */
+
+/* ================================
+   CONNECT PAGE LAYOUT
+   ================================ */
+
+.connect-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.connect-hero {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.connect-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
+.connect-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.connect-sns,
+.connect-contribute,
+.connect-faq {
+  padding: 3rem 0;
+}
+
+/* ================================
+   SNS SECTION
+   ================================ */
+
+.sns-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.sns-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--border-radius-full);
+  color: var(--color-text-white);
+  text-decoration: none;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  font-size: var(--font-size-3xl);
+  background-color: var(--brand-red);
+}
+
+.sns-link[data-color] {
+  background-color: var(--sns-color, var(--brand-red));
+}
+
+.sns-link:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-2xl);
+}
+
+.discord-note {
+  text-align: center;
+  background: var(--white-overlay-70);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ================================
+   CONTRIBUTE SECTION
+   ================================ */
+
+.contribute-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.contribute-card {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-xl);
+  text-align: center;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border: 2px solid transparent;
+  background-color: var(--bg-component);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.contribute-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-3xl);
+  border-color: var(--brand-red);
+}
+
+.contribute-icon {
+  font-size: var(--font-size-4xl);
+  color: var(--brand-red);
+  margin-bottom: 1rem;
+}
+
+.contribute-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
+.contribute-description {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.contribute-link {
+  display: inline-block;
+  background: transparent;
+  color: var(--color-text-primary);
+  padding: 0.0625rem 1rem 0.0625rem 0.5rem;
+  border-radius: var(--border-radius-2xl);
+  text-decoration: none;
+  font-weight: bold;
+  transition: all var(--transition-base);
+  position: relative;
+  border: none;
+  margin-top: auto;
+}
+
+.contribute-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 35%;
+  width: 4.5rem;
+  height: 1.2rem;
+  background: linear-gradient(90deg, 
+    var(--highlighter-hover) 0%, 
+    var(--highlighter-hover) 80%, 
+    var(--highlighter-shadow) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateX(-50%) translateY(-50%) rotate(-3deg);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--transition-base);
+}
+
+.contribute-link:hover::after {
+  opacity: 1;
+  animation: draw-highlighter 0.25s ease-out forwards;
+}
+
+.contribute-link:hover {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.contribute-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  color: var(--color-text-secondary);
+}
+
+/* ================================
+   FAQ SECTION
+   ================================ */
+
+.faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--brand-overlay-20);
+}
+
+.faq-question {
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--transition-base);
+}
+
+.faq-question:hover {
+  background: var(--brand-overlay-10);
+}
+
+.faq-question h4 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.faq-icon {
+  color: var(--brand-red);
+  transition: transform var(--transition-base);
+}
+
+.faq-question[aria-expanded="true"] .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  border-top: 1px solid var(--brand-overlay-20);
+}
+
+.faq-content-body {
+  padding: 1.5rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.faq-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  color: var(--color-text-secondary);
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
+
+@media (max-width: 768px) {
+  .connect-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .sns-links {
+    gap: 1.5rem;
+  }
+  
+  .sns-link {
+    width: 60px;
+    height: 60px;
+    font-size: var(--font-size-xl);
+  }
+  
+  .contribute-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .contribute-card {
+    padding: 1.5rem;
+  }
+  
+  .connect-page {
+    padding: 1rem 0;
+  }
+  
+  .sns-links {
+    gap: 1rem;
+  }
+  
+  .faq-question {
+    padding: 1rem;
+  }
+  
+  .faq-content-body {
+    padding: 1rem;
+  }
+  
+  /* Mobile highlighter adjustment */
+  .contribute-link::after {
+    left: 42%;
+  }
+}

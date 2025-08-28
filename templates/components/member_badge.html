@@ -1,0 +1,14 @@
+{% comment %}
+Member Badge Component
+Usage: {% include "components/member_badge.html" with member=member %}
+{% endcomment %}
+
+{% if member.member_type == 'organizer' %}
+    <div class="badge bg-dark mb-3">
+        <i class="fas fa-star"></i> Organizer
+    </div>
+{% else %}
+    <div class="badge bg-secondary mb-3">
+        <i class="fas fa-user"></i> Member
+    </div>
+{% endif %}

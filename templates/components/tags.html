@@ -1,0 +1,17 @@
+{% comment %}
+Tags Component
+Usage: {% include "components/tags.html" with tags=member.tags.all title="Skills & Interests" %}
+{% endcomment %}
+
+{% if tags %}
+    <div class="mb-4">
+        {% if title %}
+            <h6>{{ title }}</h6>
+        {% endif %}
+        <div>
+            {% for tag in tags %}
+                <span class="badge bg-light text-dark me-2 mb-1">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

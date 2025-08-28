@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact Us - PyLadies Seoul{% endblock %}
+
+{% block content %}
+    <!-- Page Header -->
+    {% include "components/page_header.html" with title="Contact Us" subtitle="파이썬을 사랑하는 여성 개발자들과 함께하고 싶으시다면 언제든지 연락주세요!" icon="fas fa-envelope" %}
+
+    <!-- Contact Form Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Send us a Message</h3>
+                            
+                            <form method="post" class="needs-validation" novalidate>
+                                {% csrf_token %}
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% include "components/form_field.html" with field_name="name" label="Name" type="text" required=True field_value=form.name.value field_error=form.name.errors.0 %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {% include "components/form_field.html" with field_name="email" label="Email" type="email" required=True field_value=form.email.value field_error=form.email.errors.0 %}
+                                    </div>
+                                </div>
+                                
+                                {% include "components/form_field.html" with field_name="subject" label="Subject" type="text" required=True field_value=form.subject.value field_error=form.subject.errors.0 %}
+                                
+                                {% include "components/form_field.html" with field_name="message" label="Message" type="textarea" required=True field_value=form.message.value field_error=form.message.errors.0 %}
+                                
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="privacy_consent" required>
+                                        <label class="form-check-label" for="privacy_consent">
+                                            I agree to the <a href="/privacy/" target="_blank">Privacy Policy</a> 
+                                            and consent to the processing of my personal data.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Information -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fab fa-slack fa-3x text-dark"></i>
+                        </div>
+                        <h5>Slack Community</h5>
+                        <p class="text-muted">Join our active Slack community for daily discussions and networking.</p>
+                        <a href="https://pyladies-seoul.slack.com" class="btn btn-outline-primary btn-sm" target="_blank">
+                            Join Slack
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fab fa-meetup fa-3x text-dark"></i>
+                        </div>
+                        <h5>Meetup Events</h5>
+                        <p class="text-muted">Check out our upcoming events and workshops on Meetup.</p>
+                        <a href="https://www.meetup.com/pyladies-seoul/" class="btn btn-outline-primary btn-sm" target="_blank">
+                            View Events
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fab fa-instagram fa-3x text-dark"></i>
+                        </div>
+                        <h5>Social Media</h5>
+                        <p class="text-muted">Follow us on Instagram for updates and behind-the-scenes content.</p>
+                        <a href="https://www.instagram.com/pyladies_seoul/" class="btn btn-outline-primary btn-sm" target="_blank">
+                            Follow Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h3 class="text-center mb-5">Frequently Asked Questions</h3>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse1" aria-expanded="false">
+                                    How can I join PyLadies Seoul?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    PyLadies Seoul welcomes all women and gender minorities who are interested in Python! 
+                                    Join our Slack community, attend our events, or reach out through this contact form.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse2" aria-expanded="false">
+                                    Do I need to be an expert in Python?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Not at all! We welcome developers of all skill levels, from beginners to experts. 
+                                    Our community is built on learning together and supporting each other.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse3" aria-expanded="false">
+                                    What kind of events do you organize?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We organize various events including workshops, talks, networking sessions, 
+                                    study groups, and community projects. Check our Events page for upcoming activities.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse4" aria-expanded="false">
+                                    How can I contribute or volunteer?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We're always looking for volunteers to help with events, content creation, 
+                                    mentoring, and organizing. Contact us through this form or reach out on Slack!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/contact.js' %}"></script>
+{% endblock %}

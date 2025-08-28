@@ -1,0 +1,141 @@
+/* PyLadies Seoul CSS Variables */
+
+:root {
+  /* Light Theme Colors */
+  --pyladies-primary: #ff6b9d;
+  --pyladies-secondary: #4ecdc4;
+  --pyladies-accent: #ffe66d;
+  --pyladies-dark: #2d3436;
+  --pyladies-light: #f8f9fa;
+  --pyladies-success: #00b894;
+  --pyladies-info: #74b9ff;
+  --pyladies-warning: #fdcb6e;
+  --pyladies-danger: #e84393;
+  
+  /* Background Colors */
+  --bg-primary: #fcd5ce;
+  --bg-component: rgba(252, 213, 206, 0.8);
+  --bg-component-light: rgba(252, 213, 206, 0.7);
+  
+  /* Brand Colors */
+  --brand-red: #ff6b9d;
+  --brand-red-dark: #e55a8a;
+  
+  /* Text Colors */
+  --color-text-primary: #2d3436;
+  --color-text-secondary: #636e72;
+  --color-text-tertiary: #74b9ff;
+  --color-text-white: #ffffff;
+  --color-text-light: #f8f9fa;
+  
+  /* Social Media Icon Colors */
+  --social-icon-color: #000000;
+  
+  /* Component Colors */
+  --white-overlay-80: rgba(255, 255, 255, 0.8);
+  --white-overlay-95: rgba(255, 255, 255, 0.95);
+  --brand-overlay-20: rgba(255, 107, 157, 0.2);
+  
+  /* Transition */
+  --transition-base: 0.3s ease;
+  --highlighter-active: rgba(220, 20, 60, 0.8);
+  --highlighter-hover: rgba(220, 20, 60, 0.8);
+  --highlighter-fade-mid: rgba(220, 20, 60, 0.4);
+  --highlighter-fade-light: rgba(220, 20, 60, 0.2);
+  --highlighter-fade-end: rgba(220, 20, 60, 0);
+  --highlighter-shadow: rgba(220, 20, 60, 0.3);
+  
+  /* Font Variables */
+  --font-primary: 'Agbalumo', 'YEONGJUPunggiGinseng', 'Noto Sans KR', cursive, sans-serif;
+  --font-korean: 'YEONGJUPunggiGinseng', 'Noto Sans KR', sans-serif;
+  --font-english: 'Agbalumo', cursive, sans-serif;
+  --font-display: 'Agbalumo', cursive, sans-serif;
+  
+  /* Font Size Variables */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-hero-icon: 8rem;  /* Hero icon size */
+  
+  /* Line Height Variables */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Spacing Variables */
+  --spacing-sm: 0.5rem;
+  --spacing-base: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border Radius Variables */
+  --border-radius-sm: 0.25rem;
+  --border-radius-base: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --border-radius-xl: 1rem;
+  --border-radius-2xl: 1.5rem;
+  --border-radius-full: 50%;
+  
+  /* Shadow Variables */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  --shadow-3xl: 0 35px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --pyladies-primary: #ff6b9d;
+  --pyladies-secondary: #4ecdc4;
+  --pyladies-accent: #ffe66d;
+  --pyladies-dark: #f8f9fa;
+  --pyladies-light: #2d3436;
+  --pyladies-success: #00d9a7;
+  --pyladies-info: #74b9ff;
+  --pyladies-warning: #fdcb6e;
+  --pyladies-danger: #e84393;
+  
+  /* Dark Font Sizes */
+  --font-size-hero-icon: 8rem;  /* Hero icon size */
+  
+  /* Dark Background Colors */
+  --bg-primary: #2d1b1b;
+  --bg-component: rgba(45, 27, 27, 0.8);
+  --bg-component-light: rgba(45, 27, 27, 0.7);
+  
+  /* Dark Brand Colors */
+  --brand-red: #ff6b9d;
+  --brand-red-dark: #ff8fb3;
+  
+  /* Dark Text Colors */
+  --color-text-primary: #f8f9fa;
+  --color-text-secondary: #ddd6fe;
+  --color-text-tertiary: #a5b4fc;
+  --color-text-white: #ffffff;
+  --color-text-light: #f8f9fa;
+  
+  /* Dark Social Media Icon Colors */
+  --social-icon-color: #000000;
+  
+  /* Dark Component Colors */
+  --white-overlay-80: rgba(45, 27, 27, 0.8);
+  --white-overlay-95: rgba(45, 27, 27, 0.95);
+  --brand-overlay-20: rgba(255, 107, 157, 0.2);
+  
+  /* Dark Highlighter Colors */
+  --highlighter-active: rgba(255, 107, 157, 0.8);
+  --highlighter-hover: rgba(255, 107, 157, 0.8);
+  --highlighter-fade-mid: rgba(255, 107, 157, 0.4);
+  --highlighter-fade-light: rgba(255, 107, 157, 0.2);
+  --highlighter-fade-end: rgba(255, 107, 157, 0);
+  --highlighter-shadow: rgba(255, 107, 157, 0.3);
+}

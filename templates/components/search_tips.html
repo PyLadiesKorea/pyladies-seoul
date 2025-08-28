@@ -1,0 +1,72 @@
+{% comment %}
+Search Tips Component
+
+사용법:
+{% include "components/search_tips.html" %}
+
+매개변수:
+- show_quick_links: 빠른 링크 표시 여부 (기본값: True)
+- class: 추가 CSS 클래스 (선택)
+{% endcomment %}
+
+<div class="search-tips {{ class|default:'' }}">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-dark mb-3"></i>
+                    <h5>Search Content</h5>
+                    <p class="text-muted">
+                        Find events, interviews, articles, and other content from our community.
+                    </p>
+                    <div class="text-start">
+                        <small class="text-muted">
+                            <strong>Try searching for:</strong><br>
+                            • "Python workshop"<br>
+                            • "Django tutorial"<br>
+                            • "Data science"
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-dark mb-3"></i>
+                    <h5>Find Members</h5>
+                    <p class="text-muted">
+                        Discover organizers and community members by name, role, or skills.
+                    </p>
+                    <div class="text-start">
+                        <small class="text-muted">
+                            <strong>Try searching for:</strong><br>
+                            • Member names<br>
+                            • "Machine learning"<br>
+                            • "Backend developer"
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if show_quick_links %}
+        <!-- Quick Links -->
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center">
+                    <h6 class="mb-3">Popular Pages</h6>
+                    <div class="d-flex justify-content-center flex-wrap gap-2">
+                        <a href="/about/" class="btn btn-outline-primary btn-sm">About PyLadies</a>
+                        <a href="/events/" class="btn btn-outline-primary btn-sm">Events</a>
+                        <a href="/members/" class="btn btn-outline-primary btn-sm">Members</a>
+                        <a href="/contact/" class="btn btn-outline-primary btn-sm">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+

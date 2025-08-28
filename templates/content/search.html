@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static content_tags %}
+
+{% block title %}
+    {% if query %}Search: {{ query }}{% else %}Search{% endif %} - PyLadies Seoul
+{% endblock %}
+
+{% block content %}
+    <main class="py-5" role="main">
+        <div class="container">
+            <!-- Search Header -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center mb-5">
+                        <h1 class="display-6 fw-bold mb-4" id="search-page-title">
+                            <i class="fas fa-search text-dark" aria-hidden="true"></i> Search
+                        </h1>
+                        
+                        <!-- Search Form -->
+                        {% include "components/search_form.html" with query=query placeholder="Search content, members..." %}
+                        
+                        {% if query %}
+                            <p class="text-muted mt-3" role="status" aria-live="polite">
+                                Search results for "<strong>{{ query }}</strong>" 
+                                (<span aria-label="{{ results_count }} results">{{ results_count }}</span> results)
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {% if query %}
+                {% if results %}
+                    <!-- Search Results -->
+                    <section class="row" aria-labelledby="search-results-heading">
+                        <div class="col-12">
+                            <h2 id="search-results-heading" class="visually-hidden">Search Results</h2>
+                            <div class="results-container">
+                                {% for result in results %}
+                                    {% include "components/search_result_card.html" with result=result %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                {% else %}
+                    <!-- No Results -->
+                    <div class="text-center py-5" role="status" aria-live="polite">
+                        <i class="fas fa-search fa-3x text-muted mb-4" aria-hidden="true"></i>
+                        <h3>No results found</h3>
+                        <p class="text-muted mb-4">
+                            We couldn't find anything matching "{{ query }}".
+                        </p>
+                        <div class="suggestions">
+                            <h6>Try:</h6>
+                            <ul class="list-unstyled">
+                                <li>• Checking your spelling</li>
+                                <li>• Using different keywords</li>
+                                <li>• Searching for broader terms</li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- Search Tips (when no query) -->
+                {% include "components/search_tips.html" %}
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}
+
+{% endblock %}

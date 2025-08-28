@@ -1,0 +1,96 @@
+{% comment %}
+Content Grid Items Component
+
+사용법:
+{% include "components/content_grid_items.html" with contents=contents %}
+
+매개변수:
+- contents: 콘텐츠 리스트 (필수)
+- columns: 그리드 컬럼 수 - 2, 3, 4 (기본값: 3)
+- show_empty_message: 빈 상태 메시지 표시 여부 (기본값: True)
+- empty_message: 빈 상태 메시지 (기본값: "No content found")
+- empty_icon: 빈 상태 아이콘 (기본값: "fas fa-search")
+- class: 추가 CSS 클래스 (선택)
+{% endcomment %}
+
+{% load content_tags %}
+
+{% if contents %}
+    <div class="row {{ class|default:'' }}">
+        {% for content in contents %}
+            <div class="col-lg-{{ 12|divisibleby:columns|default:4 }} col-md-6 mb-4">
+                <article class="card h-100" role="article" aria-labelledby="content-title-{{ forloop.counter }}">
+                    {% if content.is_event %}
+                        <!-- Event Card Header -->
+                        <header class="card-header {% get_event_status_class content %}">
+                            <small>
+                                <i class="{% get_event_status_icon content %}" aria-hidden="true"></i> 
+                                {% get_event_status_text content %}
+                            </small>
+                        </header>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title" id="content-title-{{ forloop.counter }}">
+                            <a href="{{ content.url }}" 
+                               class="text-decoration-none"
+                               aria-label="View {{ content.title }} details">
+                                {{ content.title }}
+                            </a>
+                        </h5>
+                        
+                        {% if content.meta_description %}
+                            <p class="card-text">{{ content.meta_description|truncatechars:100 }}</p>
+                        {% endif %}
+                        
+                        <!-- Event specific info -->
+                        {% if content.is_event and content.event_start_at %}
+                            <div class="mb-2">
+                                <time datetime="{{ content.event_start_at|date:'Y-m-d\TH:i' }}" class="text-muted">
+                                    <small>
+                                        <i class="fas fa-clock" aria-hidden="true"></i> 
+                                        {{ content.event_start_at|date:"Y년 m월 d일 H:i" }}
+                                    </small>
+                                </time>
+                                {% if content.location %}
+                                    <br><small class="text-muted">
+                                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i> 
+                                        <span itemprop="location">{{ content.location }}</span>
+                                    </small>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Tags -->
+                        {% if content.tags.all %}
+                            <div class="mb-2" role="group" aria-label="Content tags">
+                                {% for tag in content.tags.all %}
+                                    <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <footer class="card-footer text-muted">
+                        <time datetime="{{ content.publication_date|date:'Y-m-d' }}" class="small">
+                            <i class="fas fa-calendar-alt" aria-hidden="true"></i> 
+                            {{ content.publication_date|date:"Y.m.d" }}
+                        </time>
+                        {% if content.view_count %}
+                            <span class="ms-2 small">
+                                <i class="fas fa-eye" aria-hidden="true"></i> 
+                                <span aria-label="{{ content.view_count }} views">{{ content.view_count }}</span>
+                            </span>
+                        {% endif %}
+                    </footer>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+{% elif show_empty_message %}
+    <div class="text-center py-5" role="status" aria-live="polite">
+        <i class="{{ empty_icon|default:'fas fa-search' }} fa-3x text-muted mb-4" aria-hidden="true"></i>
+        <h3>{{ empty_message|default:"No content found" }}</h3>
+        <p class="text-muted">Try adjusting your search or filters.</p>
+    </div>
+{% endif %}

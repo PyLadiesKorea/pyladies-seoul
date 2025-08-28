@@ -1,0 +1,27 @@
+{% comment %}
+Search Form Component
+Usage: {% include "components/search_form.html" with query=query placeholder="Search content, members..." %}
+{% endcomment %}
+
+<form method="get" class="row justify-content-center" role="search" aria-label="Site search">
+    <div class="col-md-8 col-lg-6">
+        <div class="input-group input-group-lg">
+            <label for="search-input" class="visually-hidden">Search</label>
+            <input type="text" 
+                   id="search-input"
+                   name="q" 
+                   class="form-control" 
+                   placeholder="{{ placeholder|default:'Search...' }}" 
+                   value="{{ query }}" 
+                   autofocus
+                   aria-describedby="search-button">
+            <button class="btn btn-primary" 
+                    type="submit" 
+                    id="search-button"
+                    aria-label="Search">
+                <i class="fas fa-search" aria-hidden="true"></i> 
+                <span class="d-none d-sm-inline">Search</span>
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,97 @@
+{% comment %}
+Search Result Card Component
+Usage: {% include "components/search_result_card.html" with result=result %}
+{% endcomment %}
+
+{% load wagtailimages_tags %}
+
+<div class="card mb-3">
+    <div class="card-body">
+        {% if result.title %}
+            <!-- Content Page Result -->
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex align-items-start">
+                        <!-- Content Type Badge -->
+                        {% include "components/content_type_badge.html" with content=result %}
+                        
+                        <div class="flex-grow-1">
+                            <h5 class="mb-2">
+                                <a href="{{ result.url }}" class="text-decoration-none">
+                                    {{ result.title }}
+                                </a>
+                            </h5>
+                            
+                            {% if result.meta_description %}
+                                <p class="text-muted mb-2">
+                                    {{ result.meta_description|truncatechars:200 }}
+                                </p>
+                            {% endif %}
+                            
+                            <div class="d-flex align-items-center text-muted small">
+                                {% if result.publication_date %}
+                                    <span class="me-3">
+                                        <i class="fas fa-calendar-alt"></i> 
+                                        {{ result.publication_date|date:"Y.m.d" }}
+                                    </span>
+                                {% endif %}
+                                
+                                {% if result.view_count %}
+                                    <span class="me-3">
+                                        <i class="fas fa-eye"></i> 
+                                        {{ result.view_count }}
+                                    </span>
+                                {% endif %}
+                                
+                                {% if result.tags.all %}
+                                    <div class="ms-auto">
+                                        {% for tag in result.tags.all %}
+                                            <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Member Result -->
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    {% include "components/member_avatar.html" with member=result size="60" class="rounded-circle member-avatar" %}
+                </div>
+                
+                <div class="col">
+                    <div class="d-flex align-items-center mb-2">
+                        {% include "components/member_badge.html" with member=result %}
+                        
+                        <h5 class="mb-0">
+                            <a href="/member/{{ result.id }}/" class="text-decoration-none">
+                                {{ result.name }}
+                            </a>
+                        </h5>
+                    </div>
+                    
+                    {% if result.role %}
+                        <p class="text-muted mb-2">{{ result.role }}</p>
+                    {% endif %}
+                    
+                    {% if result.bio %}
+                        <p class="mb-2 small">
+                            {{ result.bio|striptags|truncatechars:150 }}
+                        </p>
+                    {% endif %}
+                    
+                    {% if result.tags.all %}
+                        <div>
+                            {% for tag in result.tags.all %}
+                                <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>

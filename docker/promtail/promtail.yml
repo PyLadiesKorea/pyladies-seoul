@@ -1,0 +1,284 @@
+# Promtail Configuration for PyLadies Seoul
+# Log aggregation and monitoring
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    # Optional: Add authentication if using external Loki
+    # basic_auth:
+    #   username: ${LOKI_USERNAME}
+    #   password: ${LOKI_PASSWORD}
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  # Django application logs
+  - job_name: django
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: django
+          service: pyladies-seoul
+          environment: production
+          __path__: /var/log/django.log*
+
+    pipeline_stages:
+      - match:
+          selector: '{job="django"}'
+          stages:
+            # Parse Django log format
+            - regex:
+                expression: '^(?P<level>\w+) (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<module>\w+) (?P<process>\d+) (?P<thread>\d+) (?P<message>.*)'
+            - labels:
+                level:
+                module:
+                process:
+                thread:
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02 15:04:05,000'
+            # Add severity levels
+            - template:
+                source: severity
+                template: |
+                  {{if eq .level "ERROR"}}error
+                  {{else if eq .level "WARNING"}}warning
+                  {{else if eq .level "INFO"}}info
+                  {{else}}debug
+                  {{end}}
+            - labels:
+                severity:
+
+  # Nginx access logs
+  - job_name: nginx-access
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-access
+          service: nginx
+          environment: production
+          __path__: /var/log/nginx/access.log*
+
+    pipeline_stages:
+      - match:
+          selector: '{job="nginx-access"}'
+          stages:
+            # Parse JSON format nginx logs
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  remote_addr: remote_addr
+                  request_method: request_method
+                  request_uri: request_uri
+                  status: status
+                  body_bytes_sent: body_bytes_sent
+                  request_time: request_time
+                  upstream_response_time: upstream_response_time
+                  user_agent: user_agent
+                  referrer: referrer
+            - labels:
+                remote_addr:
+                request_method:
+                status:
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02T15:04:05Z07:00'
+            # Add status code categories
+            - template:
+                source: status_category
+                template: |
+                  {{if and (ge .status "200") (lt .status "300")}}success
+                  {{else if and (ge .status "300") (lt .status "400")}}redirect
+                  {{else if and (ge .status "400") (lt .status "500")}}client_error
+                  {{else if and (ge .status "500") (lt .status "600")}}server_error
+                  {{else}}other
+                  {{end}}
+            - labels:
+                status_category:
+
+  # Nginx error logs
+  - job_name: nginx-error
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx-error
+          service: nginx
+          environment: production
+          __path__: /var/log/nginx/error.log*
+
+    pipeline_stages:
+      - match:
+          selector: '{job="nginx-error"}'
+          stages:
+            # Parse nginx error log format
+            - regex:
+                expression: '^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) \[(?P<level>\w+)\] (?P<pid>\d+)#(?P<tid>\d+): (?P<message>.*?)(?:, client: (?P<client>[\d.]+))?(?:, server: (?P<server>[^,]+))?(?:, request: "(?P<request>[^"]*)")?'
+            - labels:
+                level:
+                pid:
+                client:
+                server:
+            - timestamp:
+                source: timestamp
+                format: '2006/01/02 15:04:05'
+
+  # PostgreSQL logs
+  - job_name: postgresql
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: postgresql
+          service: postgres
+          environment: production
+          __path__: /var/log/postgresql/*.log
+
+    pipeline_stages:
+      - match:
+          selector: '{job="postgresql"}'
+          stages:
+            # Parse PostgreSQL log format
+            - regex:
+                expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \w+) \[(?P<pid>\d+)\]: \[(?P<line_num>\d+)-1\] user=(?P<user>\w*),db=(?P<database>\w*),app=(?P<app>\w*),client=(?P<client>[\w.]*) (?P<level>\w+):  (?P<message>.*)'
+            - labels:
+                pid:
+                user:
+                database:
+                app:
+                client:
+                level:
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02 15:04:05.000 MST'
+
+  # Redis logs
+  - job_name: redis
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: redis
+          service: redis
+          environment: production
+          __path__: /var/log/redis/*.log
+
+    pipeline_stages:
+      - match:
+          selector: '{job="redis"}'
+          stages:
+            # Parse Redis log format
+            - regex:
+                expression: '^(?P<pid>\d+):(?P<role>\w) (?P<timestamp>\d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2}\.\d{3}) (?P<level>\w) (?P<message>.*)'
+            - labels:
+                pid:
+                role:
+                level:
+            - timestamp:
+                source: timestamp
+                format: '02 Jan 2006 15:04:05.000'
+
+  # Docker container logs
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: ["logging=promtail"]
+
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        target_label: 'container_name'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'
+      - source_labels: ['__meta_docker_container_label_logging_jobname']
+        target_label: 'job'
+
+    pipeline_stages:
+      - match:
+          selector: '{container_name=~"pyladies_seoul_.*"}'
+          stages:
+            # Add environment label
+            - static_labels:
+                environment: production
+            # Parse container logs based on service
+            - match:
+                selector: '{container_name="pyladies_seoul_web_prod"}'
+                stages:
+                  - docker: {}
+                  - json:
+                      expressions:
+                        level: level
+                        logger: logger
+                        message: message
+                  - labels:
+                      level:
+                      logger:
+
+  # System logs (if accessible)
+  - job_name: syslog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syslog
+          service: system
+          environment: production
+          __path__: /var/log/syslog*
+
+    pipeline_stages:
+      - match:
+          selector: '{job="syslog"}'
+          stages:
+            # Parse syslog format
+            - regex:
+                expression: '^(?P<timestamp>\w{3} \d{1,2} \d{2}:\d{2}:\d{2}) (?P<hostname>\w+) (?P<program>[^:]+): (?P<message>.*)'
+            - labels:
+                hostname:
+                program:
+            - timestamp:
+                source: timestamp
+                format: 'Jan 02 15:04:05'
+                location: 'Local'
+
+  # Application security logs
+  - job_name: security
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: security
+          service: security
+          environment: production
+          __path__: /var/log/security/*.log
+
+    pipeline_stages:
+      - match:
+          selector: '{job="security"}'
+          stages:
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  event_type: event_type
+                  source_ip: source_ip
+                  user_agent: user_agent
+                  message: message
+            - labels:
+                level:
+                event_type:
+                source_ip:
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02T15:04:05Z07:00'
+
+# Global configuration
+global:
+  scrape_timeout: 10s

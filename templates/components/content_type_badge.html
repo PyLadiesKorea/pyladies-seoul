@@ -1,0 +1,18 @@
+{% comment %}
+Content Type Badge Component
+Usage: {% include "components/content_type_badge.html" with content=page %}
+{% endcomment %}
+
+{% if content.is_event %}
+    <span class="badge bg-success me-3 mt-1">
+        <i class="fas fa-calendar"></i> Event
+    </span>
+{% elif content.is_interview %}
+    <span class="badge bg-dark me-3 mt-1">
+        <i class="fas fa-microphone"></i> Interview
+    </span>
+{% else %}
+    <span class="badge bg-secondary me-3 mt-1">
+        <i class="fas fa-file-alt"></i> Content
+    </span>
+{% endif %}

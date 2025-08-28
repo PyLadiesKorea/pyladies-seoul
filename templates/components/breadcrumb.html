@@ -1,0 +1,31 @@
+{% comment %}
+Breadcrumb Component
+Usage: {% include "components/breadcrumb.html" with items=breadcrumb_items %}
+breadcrumb_items should be a list of dicts: [{"url": "/path", "title": "Title"}, ...]
+{% endcomment %}
+
+<nav aria-label="Breadcrumb navigation">
+    <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item">
+                <span itemprop="name">Home</span>
+            </a>
+            <meta itemprop="position" content="1" />
+        </li>
+        {% for item in items %}
+            {% if forloop.last %}
+                <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+                    <span itemprop="name">{{ item.title }}</span>
+                    <meta itemprop="position" content="{{ forloop.counter|add:1 }}" />
+                </li>
+            {% else %}
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="{{ item.url }}" itemprop="item">
+                        <span itemprop="name">{{ item.title }}</span>
+                    </a>
+                    <meta itemprop="position" content="{{ forloop.counter|add:1 }}" />
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

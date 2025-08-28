@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags content_tags %}
+
+{% block title %}{{ page.title }} - PyLadies Seoul{% endblock %}
+
+{% block meta_description %}{{ page.meta_description|default:page.intro|striptags|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+    <main class="py-5" role="main">
+        <!-- Page Header -->
+        <section class="py-5" aria-labelledby="page-title">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h1 class="display-5 fw-bold mb-4" id="page-title">{{ page.title }}</h1>
+                        <div class="lead">{{ page.intro|richtext }}</div>
+                    </div>
+                    {% if page.category_image %}
+                    <div class="col-lg-4">
+                        <img src="{{ page.category_image.url }}" 
+                             alt="{{ page.title }}" 
+                             class="img-fluid rounded"
+                             loading="lazy">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+    <!-- Events Page Special Layout -->
+    {% if is_events_page %}
+        <!-- Upcoming Events Section -->
+        {% if content_pages|has_upcoming_events %}
+            <section class="upcoming-events py-5">
+                <div class="container">
+                    <h2 class="section-title mb-4">
+                        <i class="fas fa-calendar-plus"></i> Upcoming Events
+                    </h2>
+                </div>
+            </section>
+            
+            <!-- Featured Event Card -->
+            {% with upcoming_events=content_pages|filter_upcoming_events %}
+                {% for content in upcoming_events %}
+                    <div class="container mb-5">
+                        {% include "components/event_card.html" with event=content type="featured" %}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+        {% endif %}
+        
+        <!-- Past Events Section with Search -->
+        <section class="past-events py-5" aria-labelledby="past-events-heading">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="section-title" id="past-events-heading">
+                            <i class="fas fa-history" aria-hidden="true"></i> Past Events
+                            <span class="filter-count ms-3" aria-label="Total events: {{ content_pages.count }}">{{ content_pages.count }}</span>
+                        </h2>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter for Past Events -->
+                <div class="py-4 border-bottom mb-4" role="search" aria-label="Filter and search past events">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Tag Filter -->
+                            {% if available_tags %}
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary dropdown-toggle" 
+                                        type="button" 
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        aria-label="Filter by tags">
+                                    Tags {% if current_tag %}({{ current_tag }}){% endif %}
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a class="dropdown-item" href="?" role="menuitem">All Tags</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    {% for tag in available_tags %}
+                                    <li><a class="dropdown-item" href="?tag={{ tag }}" role="menuitem">{{ tag }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Search -->
+                        <div class="col-md-4">
+                            <form method="get" class="d-flex" role="search" aria-label="Search past events">
+                                {% for key, value in request.GET.items %}
+                                    {% if key != 'search' %}
+                                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                    {% endif %}
+                                {% endfor %}
+                                <label for="event-search" class="visually-hidden">Search past events</label>
+                                <input type="text" 
+                                       id="event-search"
+                                       name="search" 
+                                       class="form-control me-2" 
+                                       placeholder="Search past events..." 
+                                       value="{{ search_query }}"
+                                       aria-describedby="event-search-button">
+                                <button type="submit" 
+                                        class="btn btn-primary" 
+                                        id="event-search-button"
+                                        aria-label="Search past events">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Past Events Grid -->
+                {% include "components/content_grid.html" with contents=content_pages filter_type="past_events" empty_message="No past events found" empty_icon="fas fa-calendar-alt" %}
+            </div>
+        </section>
+    {% else %}
+        <!-- Non-Events Pages - Original Layout -->
+        <section class="py-5" aria-labelledby="content-grid-heading">
+            <div class="container">
+                <h2 id="content-grid-heading" class="visually-hidden">Content</h2>
+                {% include "components/content_grid.html" with contents=content_pages filter_type="non_events" %}
+            </div>
+        </section>
+    {% endif %}
+    </main>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

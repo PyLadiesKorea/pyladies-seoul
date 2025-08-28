@@ -1,53 +1,361 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database with Production Configuration
+  db:
+    image: postgres:15-alpine
+    container_name: pyladies_seoul_db_prod
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - postgres_backups:/backups/
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-pyladies_seoul}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_INITDB_ARGS=--auth-local=trust --auth-host=scram-sha-256
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pyladies_seoul}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c log_destination=stderr
+      -c log_statement=all
+      -c log_connections=on
+      -c log_disconnections=on
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Redis Cache with Persistence
+  redis:
+    image: redis:7-alpine
+    container_name: pyladies_seoul_redis_prod
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+
+  # Django Application
   web:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-    command: >
-      sh -c "uv run python manage.py migrate &&
-             uv run python manage.py collectstatic --noinput &&
-             uv run gunicorn config.wsgi:application --bind 0.0.0.0:8000"
-    volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-      - sqlite_data:/app/data
-    expose:
-      - 8000
-    environment:
-      - DEBUG=0
-      - DOCKER_ENV=1
-      - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      target: production
+      args:
+        - BUILD_DATE=${BUILD_DATE}
+        - GIT_COMMIT=${GIT_COMMIT}
+    container_name: pyladies_seoul_web_prod
     restart: unless-stopped
+    volumes:
+      - media_volume:/app/media
+      - static_volume:/app/static
+      - log_volume:/app/logs
+      - backup_volume:/app/backups
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-pyladies_seoul}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - SECRET_KEY_FILE=/run/secrets/django_secret_key
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-pyladiesseoul.org,www.pyladiesseoul.org}
+      - DEBUG=False
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD_FILE=/run/secrets/django_superuser_password
+      # Email configuration
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.mailgun.org}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD_FILE=/run/secrets/email_password
+      - EMAIL_USE_TLS=True
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL:-noreply@pyladiesseoul.org}
+      # AWS S3 (optional)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY_FILE=/run/secrets/aws_secret_key
+      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME:-ap-northeast-2}
+      # Monitoring
+      - SENTRY_DSN_FILE=/run/secrets/sentry_dsn
+      - SENTRY_ENVIRONMENT=production
+      - LOGFIRE_TOKEN_FILE=/run/secrets/logfire_token
+      # Build info
+      - BUILD_DATE=${BUILD_DATE}
+      - GIT_COMMIT=${GIT_COMMIT}
+    secrets:
+      - django_secret_key
+      - django_superuser_password
+      - email_password
+      - aws_secret_key
+      - sentry_dsn
+      - logfire_token
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+      - frontend
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
+  # Nginx Reverse Proxy with SSL
   nginx:
-    image: nginx:alpine
-    container_name: nginx
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile.prod
+    container_name: pyladies_seoul_nginx_prod
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - media_volume:/app/media:ro
+      - static_volume:/app/static:ro
+      - log_volume:/var/log/nginx
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-pyladiesseoul.org}
+      - WWW_DOMAIN_NAME=${WWW_DOMAIN_NAME:-www.pyladiesseoul.org}
     depends_on:
       - web
-    restart: unless-stopped
+    networks:
+      - frontend
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
 
+  # Certbot for SSL Certificate Management
   certbot:
-    image: certbot/certbot
-    container_name: certbot
+    image: certbot/certbot:latest
+    container_name: pyladies_seoul_certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+      - log_volume:/var/log/certbot
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-pyladiesseoul.org}
+      - WWW_DOMAIN_NAME=${WWW_DOMAIN_NAME:-www.pyladiesseoul.org}
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL:-admin@pyladiesseoul.org}
+    command: >
+      sh -c "
+        while :; do
+          certbot renew --quiet --webroot --webroot-path=/var/www/certbot
+          sleep 12h
+        done
+      "
+    networks:
+      - frontend
+    depends_on:
+      - nginx
+
+  # Database Backup Service
+  backup:
+    image: postgres:15-alpine
+    container_name: pyladies_seoul_backup
+    restart: "no"
+    volumes:
+      - postgres_backups:/backups
+      - backup_volume:/app/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-pyladies_seoul}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
+    command: ["/backup.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    profiles:
+      - backup
+
+  # Log Aggregation and Monitoring
+  promtail:
+    image: grafana/promtail:latest
+    container_name: pyladies_seoul_promtail
     restart: unless-stopped
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - log_volume:/var/log:ro
+      - ./docker/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - monitoring
+    profiles:
+      - monitoring
 
+  # Application Performance Monitoring
+  apm-server:
+    image: elastic/apm-server:8.11.0
+    container_name: pyladies_seoul_apm
+    restart: unless-stopped
+    volumes:
+      - ./docker/apm/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    environment:
+      - ELASTIC_APM_SECRET_TOKEN=${ELASTIC_APM_SECRET_TOKEN}
+    ports:
+      - "8200:8200"
+    networks:
+      - monitoring
+    profiles:
+      - monitoring
+
+# Docker Secrets for Production
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  django_secret_key:
+    file: ./secrets/django_secret_key.txt
+  django_superuser_password:
+    file: ./secrets/django_superuser_password.txt
+  email_password:
+    file: ./secrets/email_password.txt
+  aws_secret_key:
+    file: ./secrets/aws_secret_key.txt
+  sentry_dsn:
+    file: ./secrets/sentry_dsn.txt
+  logfire_token:
+    file: ./secrets/logfire_token.txt
+
+# Named Volumes for Persistence
 volumes:
-  sqlite_data:
-  static_volume:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/postgres
+  postgres_backups:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/backups/postgres
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/redis
   media_volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/media
+  static_volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/static
+  log_volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/logs
+  backup_volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/backups
+  certbot_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/certbot/conf
+  certbot_www:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/certbot/www
+
+# Production Networks
+networks:
+  frontend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: pyladies_frontend
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+  backend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: pyladies_backend
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+  monitoring:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: pyladies_monitoring
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24

@@ -1,0 +1,315 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_pyladies_seoul
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libpq-dev \
+          libjpeg-dev \
+          libpng-dev \
+          libwebp-dev \
+          gettext
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: "latest"
+
+    - name: Create virtual environment
+      run: uv venv .venv
+
+    - name: Install Python dependencies
+      run: |
+        uv sync --dev
+        source .venv/bin/activate
+        pip install coverage
+
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: Set up environment variables
+      run: |
+        echo "SECRET_KEY=test-secret-key-$(openssl rand -hex 16)" >> $GITHUB_ENV
+        echo "DEBUG=True" >> $GITHUB_ENV
+        echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_pyladies_seoul" >> $GITHUB_ENV
+        echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
+        echo "EMAIL_BACKEND=django.core.mail.backends.locmem.EmailBackend" >> $GITHUB_ENV
+        echo "DJANGO_SETTINGS_MODULE=config.settings.testing" >> $GITHUB_ENV
+
+    - name: Run database migrations
+      run: |
+        source .venv/bin/activate
+        python manage.py migrate --settings=config.settings.testing
+
+    - name: Collect static files
+      run: |
+        source .venv/bin/activate
+        python manage.py collectstatic --noinput --settings=config.settings.testing
+
+    - name: Run Python tests with coverage
+      run: |
+        source .venv/bin/activate
+        coverage run --source='.' manage.py test --settings=config.settings.testing
+        coverage xml
+        coverage report
+
+    - name: Run JavaScript tests
+      run: npm test
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+
+    - name: Check code formatting (Python)
+      run: |
+        source .venv/bin/activate
+        ruff check .
+        ruff format --check .
+
+    - name: Check code formatting (JavaScript)
+      run: npm run lint
+
+    - name: Security scan
+      run: |
+        source .venv/bin/activate
+        pip install safety bandit
+        safety check --ignore 70612
+        bandit -r . -x .venv,node_modules
+
+    - name: Check migrations
+      run: |
+        source .venv/bin/activate
+        python manage.py makemigrations --check --dry-run --settings=config.settings.testing
+
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build development image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        target: development
+        push: false
+        tags: pyladies-seoul:dev
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build production image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        target: production
+        push: false
+        tags: pyladies-seoul:prod
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          GIT_COMMIT=${{ github.sha }}
+
+    - name: Test Docker containers
+      run: |
+        # Test development container
+        docker run --rm pyladies-seoul:dev python --version
+        
+        # Test production container health
+        docker run -d --name test-prod pyladies-seoul:prod
+        sleep 30
+        docker exec test-prod curl -f http://localhost:8000/health/ || exit 1
+        docker stop test-prod
+        docker rm test-prod
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Docker image security scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'image'
+        image-ref: 'pyladies-seoul:prod'
+        format: 'table'
+
+  accessibility-test:
+    name: Accessibility Testing
+    runs-on: ubuntu-latest
+    needs: build
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_pyladies_seoul
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        npm install -g @lhci/cli puppeteer
+
+    - name: Start test server
+      run: |
+        docker run -d --name test-server \
+          --network host \
+          -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_pyladies_seoul \
+          -e REDIS_URL=redis://localhost:6379/0 \
+          -e SECRET_KEY=test-secret-key \
+          -e DEBUG=False \
+          -e ALLOWED_HOSTS=localhost,127.0.0.1 \
+          pyladies-seoul:prod
+        
+        # Wait for server to be ready
+        timeout 60 bash -c 'while ! curl -f http://localhost:8000/health/; do sleep 1; done'
+
+    - name: Run Lighthouse CI
+      run: |
+        lhci autorun --upload.target=temporary-public-storage
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+    - name: Stop test server
+      run: docker stop test-server && docker rm test-server
+
+  performance-test:
+    name: Performance Testing
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Start application
+      run: |
+        docker-compose -f docker-compose.yml up -d
+        timeout 60 bash -c 'while ! curl -f http://localhost:8000/health/; do sleep 1; done'
+
+    - name: Run performance tests
+      run: |
+        # Install Apache Bench
+        sudo apt-get update && sudo apt-get install -y apache2-utils
+        
+        # Basic load test
+        ab -n 100 -c 10 http://localhost:8000/
+        
+        # API endpoint test
+        ab -n 50 -c 5 http://localhost:8000/api/health/
+
+    - name: Clean up
+      run: docker-compose down -v
+
+  notify:
+    name: Notify on Status
+    runs-on: ubuntu-latest
+    needs: [test, build, security-scan, accessibility-test, performance-test]
+    if: always()
+    
+    steps:
+    - name: Notify on success
+      if: needs.test.result == 'success' && needs.build.result == 'success'
+      run: |
+        echo "✅ All CI checks passed!"
+        
+    - name: Notify on failure
+      if: needs.test.result == 'failure' || needs.build.result == 'failure'
+      run: |
+        echo "❌ CI checks failed!"
+        exit 1

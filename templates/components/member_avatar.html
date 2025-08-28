@@ -1,0 +1,18 @@
+{% comment %}
+Member Avatar Component
+Usage: {% include "components/member_avatar.html" with member=member size="120" class="rounded-circle" %}
+{% endcomment %}
+
+{% load wagtailimages_tags %}
+
+{% if member.photo %}
+    {% image member.photo fill-{{ size|default:"200" }}x{{ size|default:"200" }} as photo %}
+    <img src="{{ photo.url }}" alt="{{ member.name }}" 
+         class="{{ class|default:'rounded-circle' }} mb-3" 
+         width="{{ size|default:'200' }}" height="{{ size|default:'200' }}">
+{% else %}
+    <div class="bg-light {{ class|default:'rounded-circle' }} d-inline-flex align-items-center justify-content-center mb-3 default-avatar"
+         style="width: {{ size|default:'200' }}px; height: {{ size|default:'200' }}px;">
+        <i class="fas fa-user text-muted fa-{{ size|default:'200'|divisibleby:60|yesno:'3x,2x,1x' }}"></i>
+    </div>
+{% endif %}

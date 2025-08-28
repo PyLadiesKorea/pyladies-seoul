@@ -1,0 +1,34 @@
+/* PyLadies Seoul Responsive Design */
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: var(--font-size-lg);
+  }
+  
+  .navbar-nav.mx-auto .nav-link {
+    width: fit-content;
+    padding-left: 12px;
+    padding-right: 12px;
+    text-align: center;
+    display: inline-block;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .display-5 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .btn-lg {
+    font-size: var(--font-size-sm);
+    padding: 0.75rem 1.5rem;
+  }
+}

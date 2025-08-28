@@ -1,0 +1,20 @@
+{% comment %}
+Page Header Component
+Usage: {% include "components/page_header.html" with title="Page Title" subtitle="Page subtitle" icon="fas fa-icon" %}
+{% endcomment %}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold mb-4">
+                    {% if icon %}<i class="{{ icon }} text-dark"></i>{% endif %}
+                    {{ title|default:"Page Title" }}
+                </h1>
+                {% if subtitle %}
+                    <p class="lead">{{ subtitle }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

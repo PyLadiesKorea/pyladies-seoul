@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags i18n %}
+
+{% block title %}{{ page.title }} - {% trans "파이썬을 사랑하는 여성 개발자 커뮤니티" %}{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">{{ page.hero_title }}</h1>
+                    <div class="lead mb-4">{{ page.hero_subtitle|richtext }}</div>
+                    
+                    {% if page.hero_cta_text and page.hero_cta_url %}
+                    <a href="{{ page.hero_cta_url }}" class="btn btn-light btn-lg px-4">
+                        {{ page.hero_cta_text }}
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <i class="fab fa-python hero-python-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    {% include "components/stat_card.html" with icon="fas fa-users" number="500+" text="Community Members" %}
+                </div>
+                <div class="col-md-3 mb-4">
+                    {% include "components/stat_card.html" with icon="fas fa-calendar" number="100+" text="Events Hosted" %}
+                </div>
+                <div class="col-md-3 mb-4">
+                    {% include "components/stat_card.html" with icon="fas fa-code" number="5+" text="Years Active" %}
+                </div>
+                <div class="col-md-3 mb-4">
+                    {% include "components/stat_card.html" with icon="fas fa-heart" number="∞" text="Python Love" %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Events Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="text-center mb-5">Recent Events</h2>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Placeholder for recent events -->
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Python Workshop</h5>
+                            <p class="card-text">Learn Python basics with our community members.</p>
+                            <small class="text-muted">2024.01.15</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Django Study Group</h5>
+                            <p class="card-text">Deep dive into Django web framework.</p>
+                            <small class="text-muted">2024.01.08</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Data Science Meetup</h5>
+                            <p class="card-text">Exploring data science with Python libraries.</p>
+                            <small class="text-muted">2024.01.01</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <a href="/events/" class="btn btn-primary">View All Events</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    {% include "components/cta_section.html" with title="Join Our Community" subtitle="파이썬을 배우고, 네트워킹하고, 함께 성장해요!" primary_btn_text="Get Started" primary_btn_url="/contact/" secondary_btn_text="Meet Members" secondary_btn_url="/members/" %}
+
+    <!-- Dynamic Content from StreamField -->
+    {% if page.body %}
+        {% for block in page.body %}
+            {% include_block block %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}{% endblock %}

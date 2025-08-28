@@ -1,0 +1,24 @@
+{% comment %}
+Content Meta Information Component
+Usage: {% include "components/content_meta.html" with content=page %}
+{% endcomment %}
+
+<div class="text-muted mb-4">
+    <small>
+        {% if content.publication_date %}
+            <i class="fas fa-calendar-alt"></i> {{ content.publication_date|date:"Y년 m월 d일" }}
+        {% endif %}
+        
+        {% if content.view_count %}
+            <span class="ms-3">
+                <i class="fas fa-eye"></i> {{ content.view_count }} views
+            </span>
+        {% endif %}
+        
+        {% if content.reading_time %}
+            <span class="ms-3">
+                <i class="fas fa-clock"></i> {{ content.reading_time }}분 읽기
+            </span>
+        {% endif %}
+    </small>
+</div>

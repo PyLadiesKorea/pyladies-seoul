@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Message Sent - PyLadies Seoul{% endblock %}
+
+{% block content %}
+    <div class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success"></i>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <h1 class="h2 mb-4">Message Sent Successfully!</h1>
+                    <p class="lead text-muted mb-4">
+                        Thank you for reaching out to PyLadies Seoul. We've received your message 
+                        and will get back to you as soon as possible.
+                    </p>
+                    
+                    <!-- What's Next -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle text-dark"></i> What happens next?
+                            </h5>
+                            <p class="card-text">
+                                Our team typically responds within 24-48 hours. In the meantime, 
+                                feel free to explore our community and upcoming events.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <a href="/events/" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar"></i> View Events
+                        </a>
+                        <a href="/members/" class="btn btn-outline-primary">
+                            <i class="fas fa-users"></i> Meet Members
+                        </a>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div class="mt-5">
+                        <h6>Connect with us while you wait:</h6>
+                        <div class="d-flex justify-content-center gap-3 mt-3">
+                            <a href="https://pyladies-seoul.slack.com" target="_blank" 
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="fab fa-slack"></i> Slack
+                            </a>
+                            <a href="https://www.meetup.com/pyladies-seoul/" target="_blank" 
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="fab fa-meetup"></i> Meetup
+                            </a>
+                            <a href="https://www.instagram.com/pyladies_seoul/" target="_blank" 
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/contact_success.js' %}"></script>
+{% endblock %}
