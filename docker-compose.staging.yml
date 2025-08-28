@@ -46,7 +46,7 @@ services:
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
     depends_on:
-      - web
+      - web-staging
     networks:
       - frontend
 
