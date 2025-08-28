@@ -22,17 +22,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS - Load after Bootstrap to override -->
-    <link rel="stylesheet" href="{% static 'css/variables.css' %}?v=3.0">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=3.0">
-    <link rel="stylesheet" href="{% static 'css/navigation.css' %}?v=1.0">
-    <link rel="stylesheet" href="{% static 'css/components.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}?v=6.0">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=5.0">
+    <link rel="stylesheet" href="{% static 'css/navigation.css' %}?v=28.0">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}?v=2.0">
     <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=1.0">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}?v=1.0">
-    <link rel="stylesheet" href="{% static 'css/pages/connect.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/pages/connect.css' %}?v=5.0">
     <link rel="stylesheet" href="{% static 'css/pages/about.css' %}?v=1.0">
     <link rel="stylesheet" href="{% static 'css/pages/members.css' %}?v=1.0">
-    <link rel="stylesheet" href="{% static 'css/theme-switch.css' %}?v=3.0">
-    <link rel="stylesheet" href="{% static 'css/social-icons.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/theme-switch.css' %}?v=10.0">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}?v=6.0">
+    
+    <!-- Prevent FOUC by applying theme immediately -->
+    <script>
+        (function() {
+            try {
+                const storedTheme = localStorage.getItem('pyladies-theme');
+                const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                const theme = storedTheme || systemTheme;
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                // Fallback to light theme if localStorage fails
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     
     {% block extra_css %}{% endblock %}
 
@@ -50,8 +65,9 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold text-dark" href="/">
-                <i class="fab fa-python"></i> PyLadies Seoul
+            <a class="navbar-brand fw-bold" href="/">
+                <img src="{% static 'images/pyladies_seoul_logo.png' %}" alt="PyLadies Seoul" class="navbar-logo">
+                PyLadies Seoul
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -63,7 +79,7 @@
                 <ul class="navbar-nav mx-auto">
                     {% for category in navigation_categories %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == category.url or category in page.get_ancestors %}active{% endif %}" href="{{ category.url }}">{{ category.title }}</a>
+                            <a class="nav-link highlighter-effect theme-adaptive-text {% if request.path == category.url or category in page.get_ancestors %}active{% endif %}" href="{{ category.url }}">{{ category.title }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -84,7 +100,7 @@
                     
                     <!-- Language Selector -->
                     <div class="language-selector d-none d-lg-block">
-                        <button class="language-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="language-toggle highlighter-effect lang-theme-text" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         {% get_current_language as CURRENT_LANGUAGE %}
                         {% if CURRENT_LANGUAGE == 'ko' %}
                             Ko
@@ -100,7 +116,7 @@
                                     {% csrf_token %}
                                     <input name="next" type="hidden" value="{{ request.get_full_path }}" />
                                     <input name="language" type="hidden" value="{{ lang_code }}" />
-                                    <button type="submit" class="dropdown-item {% if CURRENT_LANGUAGE == lang_code %}active{% endif %}">
+                                    <button type="submit" class="dropdown-item highlighter-effect lang-theme-text {% if CURRENT_LANGUAGE == lang_code %}active{% endif %}">
                                         {% if lang_code == 'ko' %}
                                             Ko
                                         {% else %}
@@ -115,7 +131,28 @@
                 </div>
                 
                 <!-- Mobile Theme Switcher and Language Selector -->
-                <div class="d-flex align-items-center d-lg-none ms-auto gap-2">
+                <div class="d-flex flex-column align-items-center d-lg-none ms-auto gap-2 mt-3">
+                    <!-- Mobile Language Selector -->
+                    <div class="language-selector-mobile">
+                    {% get_current_language as CURRENT_LANGUAGE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% for lang_code, lang_name in LANGUAGES %}
+                        <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                            <input name="language" type="hidden" value="{{ lang_code }}" />
+                            <button type="submit" class="btn btn-link language-btn highlighter-effect lang-theme-text {% if CURRENT_LANGUAGE == lang_code %}active{% endif %}">
+                                {% if lang_code == 'ko' %}
+                                    Ko
+                                {% else %}
+                                    En
+                                {% endif %}
+                            </button>
+                        </form>
+                        {% if not forloop.last %} / {% endif %}
+                    {% endfor %}
+                    </div>
+                    
                     <!-- Mobile Theme Switcher -->
                     <div class="theme-switch-wrapper d-lg-none">
                         <label class="theme-switch mobile" for="theme-checkbox-mobile">
@@ -126,27 +163,6 @@
                                 <div class="theme-slider-button"></div>
                             </div>
                         </label>
-                    </div>
-                    
-                    <!-- Mobile Language Selector -->
-                    <div class="language-selector-mobile">
-                    {% get_current_language as CURRENT_LANGUAGE %}
-                    {% get_available_languages as LANGUAGES %}
-                    {% for lang_code, lang_name in LANGUAGES %}
-                        <form action="{% url 'set_language' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                            <input name="language" type="hidden" value="{{ lang_code }}" />
-                            <button type="submit" class="btn btn-link language-btn {% if CURRENT_LANGUAGE == lang_code %}active{% endif %}">
-                                {% if lang_code == 'ko' %}
-                                    Ko
-                                {% else %}
-                                    En
-                                {% endif %}
-                            </button>
-                        </form>
-                        {% if not forloop.last %} / {% endif %}
-                    {% endfor %}
                     </div>
                 </div>
             </div>
@@ -169,13 +185,13 @@
                 <div class="col-md-6">
                     <h6>Follow Us</h6>
                     <div class="d-flex gap-3">
-                        <a href="#">
+                        <a href="#" class="social-icon-link">
                             <i class="fab fa-github fa-lg"></i>
                         </a>
-                        <a href="#">
+                        <a href="#" class="social-icon-link">
                             <i class="fab fa-twitter fa-lg"></i>
                         </a>
-                        <a href="#">
+                        <a href="#" class="social-icon-link">
                             <i class="fab fa-instagram fa-lg"></i>
                         </a>
                     </div>

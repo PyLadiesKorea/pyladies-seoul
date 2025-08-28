@@ -7,8 +7,7 @@ Usage: {% include "components/social_links_grid.html" with social_links=social_l
     <div class="sns-links">
         {% for link in social_links %}
             <a href="{{ link.full_url }}" target="_blank" rel="noopener noreferrer" 
-               class="sns-link" title="{{ link.platform.name }}"
-               {% if link.platform.color %}data-color="{{ link.platform.color }}"{% endif %}>
+               class="social-icon-link" title="{{ link.platform.name }}">
                 <i class="{{ link.platform.icon_class }}"></i>
             </a>
         {% endfor %}

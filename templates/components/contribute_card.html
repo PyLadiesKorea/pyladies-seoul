@@ -7,7 +7,7 @@ Usage: {% include "components/contribute_card.html" with method=method %}
     <div class="contribute-icon">
         <i class="{{ method.icon_class }}"></i>
     </div>
-    <h3 class="contribute-title">{{ method.title }}</h3>
+    <h3 class="contribute-title highlighter-effect">{{ method.title }}</h3>
     <p class="contribute-description">{{ method.description }}</p>
     {% if method.link_url %}
         <a href="{{ method.link_url }}" class="contribute-link" target="_blank" rel="noopener noreferrer">{{ method.link_text }}</a>

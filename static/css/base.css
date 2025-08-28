@@ -356,11 +356,16 @@ article,
   justify-content: center !important;
 }
 
-/* Force center all navigation and menu items */
-.navbar-nav,
+/* Force center all navigation and menu items - except when using mx-auto */
 .nav,
 .nav-pills,
 .nav-tabs {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* Let navbar-nav with mx-auto class work properly */
+.navbar-nav:not(.mx-auto) {
   justify-content: center !important;
   text-align: center !important;
 }
@@ -628,4 +633,115 @@ body .bg-secondary {
 
 [data-theme="dark"] .language-btn:hover {
   color: var(--brand-red) !important;
+}
+
+/* ================================
+   BUTTON OVERRIDES FOR DARK MODE
+   ================================ */
+
+/* Primary buttons */
+.btn-primary {
+  color: var(--color-text-white) !important;
+  background-color: var(--brand-red) !important;
+  border-color: var(--brand-red) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  color: var(--color-text-white) !important;
+  background-color: var(--brand-red-dark) !important;
+  border-color: var(--brand-red-dark) !important;
+}
+
+.btn-outline-primary {
+  color: var(--brand-red) !important;
+  border-color: var(--brand-red) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  color: var(--color-text-white) !important;
+  background-color: var(--brand-red) !important;
+  border-color: var(--brand-red) !important;
+}
+
+/* Light buttons - problematic in dark mode */
+.btn-light {
+  color: var(--color-text-primary) !important;
+  background-color: var(--bg-component) !important;
+  border-color: var(--border-color-light) !important;
+}
+
+.btn-light:hover,
+.btn-light:focus,
+.btn-light:active {
+  color: var(--color-text-primary) !important;
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color-medium) !important;
+}
+
+.btn-outline-light {
+  color: var(--color-text-primary) !important;
+  border-color: var(--border-color-medium) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-light:hover,
+.btn-outline-light:focus,
+.btn-outline-light:active {
+  color: var(--bg-primary) !important;
+  background-color: var(--color-text-primary) !important;
+  border-color: var(--color-text-primary) !important;
+}
+
+/* Secondary buttons */
+.btn-secondary {
+  color: var(--color-text-white) !important;
+  background-color: var(--color-text-secondary) !important;
+  border-color: var(--color-text-secondary) !important;
+}
+
+.btn-outline-secondary {
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-text-secondary) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+  color: var(--bg-primary) !important;
+  background-color: var(--color-text-secondary) !important;
+  border-color: var(--color-text-secondary) !important;
+}
+
+/* Link buttons */
+.btn-link {
+  color: var(--color-text-primary) !important;
+  text-decoration: none !important;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  color: var(--brand-red) !important;
+  text-decoration: none !important;
+}
+
+/* ================================
+   STAT CARDS STYLING
+   ================================ */
+
+.stat-icon {
+  color: var(--color-text-primary) !important;
+}
+
+.stat-number {
+  color: var(--color-text-primary) !important;
+}
+
+.stat-text {
+  color: var(--color-text-secondary) !important;
 }

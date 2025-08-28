@@ -18,18 +18,33 @@
   --bg-component-light: rgba(252, 213, 206, 0.7);
   
   /* Brand Colors */
-  --brand-red: #ff6b9d;
-  --brand-red-dark: #e55a8a;
+  --brand-red: rgba(220, 20, 60, 1);
+  --brand-red-dark: rgba(220, 20, 60, 0.6);
+  --brand-red-light: rgba(220, 20, 60, 0.4);
+  --brand-red-dim: rgba(150, 15, 45, 1);
   
-  /* Text Colors */
-  --color-text-primary: #2d3436;
-  --color-text-secondary: #636e72;
-  --color-text-tertiary: #74b9ff;
-  --color-text-white: #ffffff;
-  --color-text-light: #f8f9fa;
+  /* Text Colors - Unified Theme System */
+  --text-primary: #2d3436;
+  --text-secondary: #636e72;
+  --text-tertiary: #74b9ff;
+  --text-inverse: #ffffff;
+  --text-light: #f8f9fa;
   
-  /* Social Media Icon Colors */
-  --social-icon-color: #000000;
+  /* Navigation Text Colors */
+  --nav-text: var(--text-primary);
+  --nav-text-hover: var(--text-primary);
+  --nav-text-active: var(--text-primary);
+  
+  /* Legacy support */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-white: var(--text-inverse);
+  --color-text-light: var(--text-light);
+  
+  /* Icon Colors - Global Management */
+  --icon-color-primary: #000000;
+  --social-icon-color: var(--icon-color-primary);
   
   /* Component Colors */
   --white-overlay-80: rgba(255, 255, 255, 0.8);
@@ -108,34 +123,97 @@
   --font-size-hero-icon: 8rem;  /* Hero icon size */
   
   /* Dark Background Colors */
-  --bg-primary: #2d1b1b;
-  --bg-component: rgba(45, 27, 27, 0.8);
-  --bg-component-light: rgba(45, 27, 27, 0.7);
+  --bg-primary: #2a2b2d;
+  --bg-component: rgba(42, 43, 45, 0.8);
+  --bg-component-light: rgba(42, 43, 45, 0.7);
   
   /* Dark Brand Colors */
-  --brand-red: #ff6b9d;
-  --brand-red-dark: #ff8fb3;
+  --brand-red: rgba(220, 20, 60, 1);
+  --brand-red-dark: rgba(220, 20, 60, 0.6);
+  --brand-red-light: rgba(220, 20, 60, 0.4);
+  --brand-red-dim: rgba(150, 15, 45, 1);
   
-  /* Dark Text Colors */
-  --color-text-primary: #f8f9fa;
-  --color-text-secondary: #ddd6fe;
-  --color-text-tertiary: #a5b4fc;
+  /* Dark Text Colors - Unified Theme System */
+  --text-primary: #f8f9fa;
+  --text-secondary: #ddd6fe;
+  --text-tertiary: #a5b4fc;
+  --text-inverse: #2d3436;
+  --text-light: #f8f9fa;
+  
+  /* Dark Navigation Text Colors */
+  --nav-text: var(--text-primary);
+  --nav-text-hover: var(--text-primary);
+  --nav-text-active: var(--text-primary);
+  
+  /* Legacy support */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
   --color-text-white: #ffffff;
-  --color-text-light: #f8f9fa;
+  --color-text-light: var(--text-light);
   
-  /* Dark Social Media Icon Colors */
-  --social-icon-color: #000000;
+  /* Dark Icon Colors - Global Management */
+  --icon-color-primary: #ffffff;
+  --social-icon-color: var(--icon-color-primary);
   
   /* Dark Component Colors */
-  --white-overlay-80: rgba(45, 27, 27, 0.8);
-  --white-overlay-95: rgba(45, 27, 27, 0.95);
+  --white-overlay-80: rgba(42, 43, 45, 0.8);
+  --white-overlay-95: rgba(42, 43, 45, 0.95);
   --brand-overlay-20: rgba(255, 107, 157, 0.2);
   
   /* Dark Highlighter Colors */
-  --highlighter-active: rgba(255, 107, 157, 0.8);
-  --highlighter-hover: rgba(255, 107, 157, 0.8);
-  --highlighter-fade-mid: rgba(255, 107, 157, 0.4);
-  --highlighter-fade-light: rgba(255, 107, 157, 0.2);
-  --highlighter-fade-end: rgba(255, 107, 157, 0);
-  --highlighter-shadow: rgba(255, 107, 157, 0.3);
+  --highlighter-active: rgba(220, 20, 60, 0.8);
+  --highlighter-hover: rgba(220, 20, 60, 0.8);
+  --highlighter-fade-mid: rgba(220, 20, 60, 0.4);
+  --highlighter-fade-light: rgba(220, 20, 60, 0.2);
+  --highlighter-fade-end: rgba(220, 20, 60, 0);
+  --highlighter-shadow: rgba(220, 20, 60, 0.3);
+}
+
+/* ================================
+   GLOBAL THEME UTILITY CLASSES
+   ================================ */
+
+/* Text Color Utilities */
+.text-theme-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-theme-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+/* Navigation Theme Classes */
+.nav-theme-text {
+  color: var(--nav-text) !important;
+}
+
+.nav-theme-text:hover {
+  color: var(--nav-text-hover) !important;
+}
+
+.nav-theme-text.active {
+  color: var(--nav-text-active) !important;
+}
+
+/* Universal Theme Text - applies to all states */
+.theme-adaptive-text,
+.theme-adaptive-text:hover,
+.theme-adaptive-text:focus,
+.theme-adaptive-text:active,
+.theme-adaptive-text.active {
+  color: var(--text-primary) !important;
+}
+
+/* Language Selector Theme */
+.lang-theme-text,
+.lang-theme-text:hover,
+.lang-theme-text:focus,
+.lang-theme-text:active,
+.lang-theme-text.active {
+  color: var(--text-primary) !important;
 }

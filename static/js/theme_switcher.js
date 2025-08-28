@@ -1,13 +1,14 @@
 // Theme Switcher for PyLadies Seoul Website
 class ThemeSwitcher {
     constructor() {
-        this.theme = this.getStoredTheme() || 'light';
+        // Get current theme from document attribute (already set by inline script)
+        this.theme = document.documentElement.getAttribute('data-theme') || this.getStoredTheme() || 'light';
         this.init();
     }
 
     init() {
-        // Apply stored theme on page load
-        this.applyTheme(this.theme);
+        // Theme is already applied by inline script, just sync UI
+        console.log('Current theme from document:', this.theme);
         
         // Create theme switcher button if it doesn't exist
         this.createThemeSwitcherButton();

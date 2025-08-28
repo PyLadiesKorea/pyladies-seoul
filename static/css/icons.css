@@ -1,0 +1,79 @@
+/* Global Icon Management - Centralized Control */
+
+/* ===========================================
+   ALL ICONS - UNIFIED STYLING
+   =========================================== */
+
+/* Global icon color - applies to ALL icons site-wide */
+i, 
+.fa, .fas, .far, .fab, .fal, .fad,
+[class*="fa-"],
+.icon,
+.contribute-icon,
+.faq-icon,
+.hero-python-icon {
+  color: var(--icon-color-primary) !important;
+}
+
+
+/* Override FontAwesome defaults */
+.fab.fa-github,
+.fab.fa-twitter,
+.fab.fa-instagram,
+.fab.fa-discord,
+.fab.fa-linkedin,
+.fab.fa-facebook {
+  color: inherit !important;
+}
+
+/* Override Bootstrap link color for footer icons */
+footer a i, 
+footer a .fab, 
+footer a .fa, 
+.footer a i, 
+.footer a .fab, 
+.footer a .fa,
+footer .d-flex a {
+  color: var(--icon-color-primary) !important;
+}
+
+/* Footer social icon link style - smaller size */
+footer .social-icon-link,
+.footer .social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform var(--transition-base);
+  font-size: var(--font-size-lg);
+  color: var(--icon-color-primary) !important;
+  padding: 0.25rem;
+}
+
+footer .social-icon-link:hover,
+.footer .social-icon-link:hover {
+  transform: scale(1.2);
+  color: var(--icon-color-primary) !important;
+}
+
+/* SNS section social icon link style - larger size (2x footer) */
+.sns-links .social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform var(--transition-base);
+  font-size: var(--font-size-4xl);
+  color: var(--icon-color-primary) !important;
+  padding: 1rem;
+}
+
+.sns-links .social-icon-link:hover {
+  transform: scale(1.2);
+  color: var(--icon-color-primary) !important;
+}
+
+/* Ensure icon colors are consistent */
+.social-icon-link i {
+  color: var(--icon-color-primary) !important;
+}

@@ -7,7 +7,7 @@ Usage: {% include "components/faq_accordion.html" with faq_pages=faq_pages %}
     <div class="faq-list">
         {% for faq in faq_pages %}
         <div class="faq-item">
-            <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq-{{ forloop.counter }}" aria-expanded="false">
+            <div class="faq-question highlighter-effect" data-bs-toggle="collapse" data-bs-target="#faq-{{ forloop.counter }}" aria-expanded="false">
                 <h4>{{ faq.question }}</h4>
                 <i class="fas fa-chevron-down faq-icon"></i>
             </div>

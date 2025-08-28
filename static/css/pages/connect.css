@@ -46,29 +46,6 @@
   margin-bottom: 2rem;
 }
 
-.sns-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: var(--border-radius-full);
-  color: var(--color-text-white);
-  text-decoration: none;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-  font-size: var(--font-size-3xl);
-  background-color: var(--brand-red);
-}
-
-.sns-link[data-color] {
-  background-color: var(--sns-color, var(--brand-red));
-}
-
-.sns-link:hover {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-2xl);
-}
-
 .discord-note {
   text-align: center;
   background: var(--white-overlay-70);
@@ -109,7 +86,7 @@
 
 .contribute-icon {
   font-size: var(--font-size-4xl);
-  color: var(--brand-red);
+  color: var(--icon-color-primary);
   margin-bottom: 1rem;
 }
 
@@ -118,6 +95,25 @@
   font-size: var(--font-size-xl);
   color: var(--color-text-primary);
   margin-bottom: 1rem;
+}
+
+.contribute-title.highlighter-effect {
+  position: relative;
+  display: inline-block;
+}
+
+.contribute-title.highlighter-effect::after {
+  bottom: 0.2em;
+  left: 0;
+  right: 0;
+  height: 0.5em;
+  opacity: 0;
+  transform: rotate(-3deg) scaleX(0);
+  transform-origin: left center;
+}
+
+.contribute-title.highlighter-effect:hover::after {
+  opacity: 1;
 }
 
 .contribute-description {
@@ -211,7 +207,7 @@
 }
 
 .faq-icon {
-  color: var(--brand-red);
+  color: var(--icon-color-primary);
   transition: transform var(--transition-base);
 }
 

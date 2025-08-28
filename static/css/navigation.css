@@ -7,6 +7,16 @@
 /* Desktop Language Selector */
 .language-selector {
   position: relative !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin-top: -7px !important;
+}
+
+/* Force hide desktop language selector on mobile, even inside collapsed navbar */
+@media (max-width: 991.98px) {
+  .navbar-collapse .language-selector {
+    display: none !important;
+  }
 }
 
 .language-selector .dropdown-menu,
@@ -94,35 +104,10 @@ body .language-selector .dropdown-menu[style] {
   z-index: 2;
 }
 
-.language-selector .dropdown-item::after {
-  content: '';
-  position: absolute;
-  top: 60%;
-  left: 8px;
-  right: 8px;
-  height: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border-radius: 2px;
-  z-index: -1;
-  transition: var(--transition-base);
-  transform-origin: left center;
-}
-
 .language-selector .dropdown-item:hover {
   color: inherit;
   border: none;
   background: var(--bg-primary);
-}
-
-.language-selector .dropdown-item:hover::after {
-  background: linear-gradient(90deg, 
-    var(--highlighter-hover) 0%, 
-    var(--highlighter-hover) 80%, 
-    var(--highlighter-shadow) 90%, 
-    var(--highlighter-fade-end) 100%);
-  transform: translateY(-50%) rotate(-3deg);
-  animation: draw-highlighter 0.25s ease-out forwards;
 }
 
 .language-selector .dropdown-item.active {
@@ -131,32 +116,88 @@ body .language-selector .dropdown-menu[style] {
   background: var(--bg-primary);
 }
 
-.language-selector .dropdown-item.active::after {
-  background: linear-gradient(90deg, 
-    var(--highlighter-active) 0%, 
-    var(--highlighter-active) 80%, 
-    var(--highlighter-fade-mid) 90%, 
-    var(--highlighter-fade-end) 100%);
-  transform: translateY(-50%) rotate(-4deg);
-  box-shadow: var(--shadow-md) var(--highlighter-shadow);
-}
-
 /* Language toggle button */
+/* Language toggle button - simplified */
 .language-toggle {
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
   background: none;
   border: none;
-  color: inherit;
-  padding: 6px 12px;
-  margin: 4px 0;
+  padding: 4px 8px;
+  margin: 0;
+  margin-top: -7px;
+  height: 20px;
   cursor: pointer;
   transition: var(--transition-base);
   position: relative;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
-.language-toggle::after {
+.language-toggle:hover {
+  color: inherit;
+}
+
+/* Language form */
+.language-form {
+  margin: 0 !important;
+}
+
+/* Mobile Language Selector */
+.language-selector-mobile {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Ensure mobile language selector is hidden on desktop */
+@media (min-width: 992px) {
+  .language-selector-mobile {
+    display: none !important;
+  }
+}
+
+/* Mobile language button - simplified */
+.language-selector-mobile .language-btn {
+  text-decoration: none;
+  padding: 4px 10px;
+  font-size: var(--font-size-base);
+  border: none;
+  background: none;
+  position: relative;
+  font-family: var(--font-primary);
+  z-index: 2;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-selector-mobile .language-btn.active {
+  color: inherit;
+  font-weight: bold;
+}
+
+.language-selector-mobile .language-btn:hover {
+  color: inherit;
+}
+
+
+/* ================================
+   HIGHLIGHTER UTILITY CLASS
+   ================================ */
+
+.highlighter-effect {
+  position: relative;
+  display: inline-block;
+}
+
+.highlighter-effect::after {
   content: '';
   position: absolute;
   top: 60%;
@@ -171,52 +212,43 @@ body .language-selector .dropdown-menu[style] {
   transform-origin: left center;
 }
 
-.language-toggle:hover {
-  color: inherit;
+/* 태블릿 및 모바일에서 형광펜 위치 조정 */
+@media (max-width: 991.98px) {
+  .navbar-collapse .highlighter-effect::after {
+    left: 0;
+    right: 0;
+  }
+  
+  .navbar-collapse .nav-link.highlighter-effect {
+    display: inline-block;
+    padding: 8px 12px;
+  }
 }
 
-.language-toggle:hover::after {
+.highlighter-effect:not(.active)::after {
+  transform: translateY(-50%) rotate(-3deg) scaleX(0);
+  transform-origin: left center;
+}
+
+.highlighter-effect:not(.active):hover::after {
   background: linear-gradient(90deg, 
-    var(--highlighter-hover) 0%, 
-    var(--highlighter-hover) 80%, 
-    var(--highlighter-shadow) 90%, 
+    var(--highlighter-active) 0%, 
+    var(--highlighter-active) 80%, 
+    var(--highlighter-fade-mid) 90%, 
     var(--highlighter-fade-end) 100%);
-  transform: translateY(-50%) rotate(-3deg);
   animation: draw-highlighter 0.25s ease-out forwards;
 }
 
-/* Language form */
-.language-form {
-  margin: 0 !important;
+.highlighter-effect.active::after {
+  background: linear-gradient(90deg, 
+    var(--highlighter-active) 0%, 
+    var(--highlighter-active) 80%, 
+    var(--highlighter-fade-mid) 90%, 
+    var(--highlighter-fade-end) 100%);
+  transform: translateY(-50%) rotate(-4deg);
+  box-shadow: var(--shadow-md) var(--highlighter-shadow);
 }
 
-/* Mobile Language Selector */
-.language-selector-mobile {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.language-selector-mobile .language-btn {
-  color: var(--color-text-light);
-  text-decoration: none;
-  padding: 6px 12px;
-  font-size: var(--font-size-base);
-  border: none;
-  background: none;
-  position: relative;
-  font-family: var(--font-primary);
-  z-index: 2;
-}
-
-.language-selector-mobile .language-btn.active {
-  color: var(--color-text-light);
-  font-weight: bold;
-}
-
-.language-selector-mobile .language-btn:hover {
-  color: var(--color-text-light);
-}
 
 /* ================================
    NAVIGATION
@@ -226,6 +258,37 @@ body .language-selector .dropdown-menu[style] {
   font-family: var(--font-primary);
   font-size: var(--font-size-xl);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-primary) !important;
+  text-decoration: none !important;
+  background: var(--brand-red-light);
+  padding: 1px 8px;
+  transform: rotate(-4deg);
+  transition: var(--transition-base);
+}
+
+.navbar .navbar-brand:hover {
+  background: var(--highlighter-active);
+  color: var(--color-text-white) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-logo {
+  height: 32px;
+  width: auto;
+  max-width: 32px;
+  flex-shrink: 0;
+}
+
+/* Force navbar center alignment */
+.navbar-nav.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-content: center !important;
+  display: flex !important;
 }
 
 .navbar .navbar-nav .nav-item {
@@ -239,50 +302,104 @@ body .language-selector .dropdown-menu[style] {
   padding: 6px 12px;
   margin: 4px 0;
   transition: var(--transition-base);
-  z-index: 2;
   color: inherit;
   font-weight: 500;
 }
 
-.navbar .navbar-nav .nav-link::after {
-  content: '';
-  position: absolute;
-  top: 60%;
-  left: 4px;
-  right: -2px;
-  height: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border-radius: 2px;
-  z-index: -1;
-  transition: var(--transition-base);
-  transform-origin: left center;
-}
-
-.navbar .navbar-nav .nav-link.active::after {
-  background: linear-gradient(90deg, 
-    var(--highlighter-active) 0%, 
-    var(--highlighter-active) 80%, 
-    var(--highlighter-fade-mid) 90%, 
-    var(--highlighter-fade-end) 100%);
-  transform: translateY(-50%) rotate(-4deg);
-  box-shadow: var(--shadow-md) var(--highlighter-shadow);
-}
-
-.navbar .navbar-nav .nav-link:not(.active)::after {
-  transform: translateY(-50%) rotate(-3deg) scaleX(0);
-  transform-origin: left center;
-}
-
-.navbar .navbar-nav .nav-link:not(.active):hover::after {
-  background: linear-gradient(90deg, 
-    var(--highlighter-active) 0%, 
-    var(--highlighter-active) 80%, 
-    var(--highlighter-fade-mid) 90%, 
-    var(--highlighter-fade-end) 100%);
-  animation: draw-highlighter 0.25s ease-out forwards;
+.navbar .navbar-nav .nav-link.highlighter-effect {
+  z-index: 2;
 }
 
 .navbar .navbar-nav .nav-link:hover {
   color: inherit;
+}
+
+/* ================================
+   THEME-BASED NAVIGATION STYLES
+   ================================ */
+
+/* All navigation elements use theme-adaptive text - FORCE OVERRIDE */
+.navbar .navbar-nav .nav-link,
+.navbar-nav .nav-link,
+.nav-link.theme-adaptive-text,
+a.nav-link {
+  color: var(--nav-text) !important;
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:hover,
+.nav-link.theme-adaptive-text:hover,
+a.nav-link:hover {
+  color: var(--nav-text-hover) !important;
+}
+
+.navbar .navbar-nav .nav-link.active,
+.navbar-nav .nav-link.active,
+.nav-link.theme-adaptive-text.active,
+a.nav-link.active {
+  color: var(--nav-text-active) !important;
+}
+
+/* Bootstrap override for dark theme */
+[data-theme="dark"] .navbar-light .navbar-nav .nav-link,
+[data-theme="dark"] .navbar-light .navbar-nav .nav-link:hover,
+[data-theme="dark"] .navbar-light .navbar-nav .nav-link.active {
+  color: var(--text-primary) !important;
+}
+
+/* Language selector theme integration - FORCE OVERRIDE */
+.language-toggle,
+.dropdown-item,
+.language-selector-mobile .language-btn,
+button.language-toggle,
+button.dropdown-item,
+button.language-btn,
+.lang-theme-text {
+  color: var(--text-primary) !important;
+}
+
+.language-toggle:hover,
+.dropdown-item:hover,
+.language-selector-mobile .language-btn:hover,
+.language-selector-mobile .language-btn.active,
+button.language-toggle:hover,
+button.dropdown-item:hover,
+button.language-btn:hover,
+button.language-btn.active,
+.lang-theme-text:hover,
+.lang-theme-text.active {
+  color: var(--text-primary) !important;
+}
+
+/* Bootstrap button override for dark theme */
+[data-theme="dark"] .btn-link,
+[data-theme="dark"] .btn-link:hover,
+[data-theme="dark"] .btn-link:focus,
+[data-theme="dark"] .btn-link.active {
+  color: var(--text-primary) !important;
+}
+
+/* Additional Ko/En specific overrides */
+[data-theme="dark"] .language-selector-mobile .btn-link,
+[data-theme="dark"] .language-selector .dropdown-item,
+[data-theme="dark"] .dropdown-menu .dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+/* Force override for all language buttons */
+[data-theme="dark"] button[type="submit"].language-btn,
+[data-theme="dark"] button[type="submit"].dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+/* Language selector highlighter position adjustment */
+.language-selector .highlighter-effect::after,
+.language-toggle.highlighter-effect::after {
+  top: 85% !important;
+  transform: translateY(-50%) !important;
+}
+
+.dropdown-item.highlighter-effect::after {
+  top: 75% !important;
+  transform: translateY(-50%) !important;
 }
