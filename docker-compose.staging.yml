@@ -1,7 +1,7 @@
 services:
 
   # Django Application - Staging
-  web:
+  web-staging:
     build:
       context: .
       target: production
@@ -20,7 +20,7 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings.staging
       - SECRET_KEY=${SECRET_KEY:-staging-secret-key-change-in-production}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
-      - DEBUG=False
+      - DEBUG=True
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@staging.pyladiesseoul.org}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-staging_admin_password}
     networks:
@@ -32,7 +32,7 @@ services:
           cpus: '0.5'
 
   # Nginx for Staging
-  nginx:
+  nginx-staging:
     image: nginx:alpine
     container_name: pyladies_seoul_nginx_staging
     restart: unless-stopped
