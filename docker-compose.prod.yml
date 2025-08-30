@@ -1,56 +1,31 @@
 services:
 
-  # Django Application
+  # Django Application - Production
   web:
     build:
       context: .
       target: production
-      args:
-        - BUILD_DATE=${BUILD_DATE}
-        - GIT_COMMIT=${GIT_COMMIT}
     container_name: pyladies_seoul_web_prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     volumes:
       - media_volume:/app/media
       - static_volume:/app/static
       - log_volume:/app/logs
-      - backup_volume:/app/backups
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.production
-      - SECRET_KEY_FILE=/run/secrets/django_secret_key
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-pyladiesseoul.org,www.pyladiesseoul.org}
-      - DEBUG=False
-      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
-      - DJANGO_SUPERUSER_PASSWORD_FILE=/run/secrets/django_superuser_password
-
-      # AWS S3 (optional)
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY_FILE=/run/secrets/aws_secret_key
-      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
-      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME:-ap-northeast-2}
-
-      # Build info
-      - BUILD_DATE=${BUILD_DATE}
-      - GIT_COMMIT=${GIT_COMMIT}
     secrets:
       - django_secret_key
       - django_superuser_password
       - aws_secret_key
     networks:
       - frontend
-    security_opt:
-      - no-new-privileges:true
     deploy:
       resources:
         limits:
           memory: 1G
           cpus: '1.0'
-        reservations:
-          memory: 512M
-          cpus: '0.5'
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
 
   # Nginx Reverse Proxy with SSL
   nginx:
@@ -78,16 +53,6 @@ services:
       - web
     networks:
       - frontend
-    security_opt:
-      - no-new-privileges:true
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-        reservations:
-          memory: 64M
-          cpus: '0.1'
 
   # Certbot for SSL Certificate Management
   certbot:
@@ -113,26 +78,6 @@ services:
     depends_on:
       - nginx
 
-
-
-  # Log Aggregation and Monitoring
-  promtail:
-    image: grafana/promtail:latest
-    container_name: pyladies_seoul_promtail
-    restart: unless-stopped
-    volumes:
-      - log_volume:/var/log:ro
-      - ./docker/promtail/promtail.yml:/etc/promtail/config.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - monitoring
-    profiles:
-      - monitoring
-
-
-
 # Docker Secrets for Production
 secrets:
   django_secret_key:
@@ -146,54 +91,16 @@ secrets:
 volumes:
   media_volume:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/media
   static_volume:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/static
   log_volume:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/logs
-  backup_volume:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/backups
   certbot_conf:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/certbot/conf
   certbot_www:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR:-./data}/certbot/www
 
 # Production Networks
 networks:
   frontend:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: pyladies_frontend
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
-  monitoring:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: pyladies_monitoring
-    ipam:
-      config:
-        - subnet: 172.22.0.0/24
