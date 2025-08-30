@@ -67,6 +67,24 @@ COMPRESS_OFFLINE = False
 # SASS settings
 SASS_OUTPUT_STYLE = "expanded"
 
+# Check if we can write to the logs directory
+can_write_logs = False
+
+try:
+    # Try to create the logs directory
+    os.makedirs("/app/logs", exist_ok=True)
+    
+    # Try to write a test file
+    test_file = "/app/logs/test_write.tmp"
+    with open(test_file, 'w') as f:
+        f.write('test')
+    os.unlink(test_file)  # Remove test file
+    
+    can_write_logs = True
+except (OSError, PermissionError):
+    can_write_logs = False
+    print("Warning: Cannot write to logs directory, using console logging only")
+
 # Logging configuration for staging
 LOGGING = {
     "version": 1,
@@ -78,44 +96,53 @@ LOGGING = {
         },
     },
     "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": BASE_DIR / "logs" / "django_staging.log",
-            "maxBytes": 1024 * 1024 * 15,  # 15MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
+        "null": {
+            "class": "logging.NullHandler",
+        },
     },
-    "root": {
-        "handlers": ["console"],
+}
+
+# Add file handler only if we can write to logs
+if can_write_logs:
+    LOGGING["handlers"]["file"] = {
+        "level": "INFO",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": "/app/logs/django_staging.log",
+        "maxBytes": 1024 * 1024 * 15,  # 15MB
+        "backupCount": 5,
+        "formatter": "verbose",
+    }
+
+# Add root and loggers configuration
+LOGGING["root"] = {
+    "handlers": ["console"],
+}
+
+LOGGING["loggers"] = {
+    "django": {
+        "handlers": ["console"] + (["file"] if can_write_logs else []),
+        "level": "INFO",
+        "propagate": False,
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.security": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "wagtail": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "apps": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
+    "django.security": {
+        "handlers": ["console"] + (["file"] if can_write_logs else []),
+        "level": "INFO",
+        "propagate": False,
+    },
+    "wagtail": {
+        "handlers": ["console"] + (["file"] if can_write_logs else []),
+        "level": "INFO",
+        "propagate": False,
+    },
+    "apps": {
+        "handlers": ["console"] + (["file"] if can_write_logs else []),
+        "level": "INFO",
+        "propagate": False,
     },
 }
 

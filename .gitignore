@@ -216,6 +216,7 @@ local_settings.py
 .env.development.local
 .env.test.local
 .env.production.local
+.env.staging
 
 # Docker
 docker-compose.override.yml

@@ -104,7 +104,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd --gid 1000 appuser && \
     useradd --uid 1000 --gid 1000 --shell /bin/bash --create-home appuser && \
     mkdir -p /app/media /app/static /app/logs /app/backups /app/db && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chmod 755 /app/logs
 
 # Set work directory
 WORKDIR /app
@@ -123,6 +124,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN cat > /app/entrypoint.sh << 'EOF'
 #!/bin/bash
 set -e
+
+echo "Creating logs directory..."
+mkdir -p /app/logs
+touch /app/logs/django_staging.log || echo "Could not create log file, will use console logging only"
 
 echo "Running migrations..."
 python manage.py migrate --noinput
