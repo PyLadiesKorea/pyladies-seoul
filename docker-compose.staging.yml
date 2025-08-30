@@ -18,11 +18,6 @@ services:
       - "8001:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.staging
-      - SECRET_KEY=${SECRET_KEY:-staging-secret-key-change-in-production}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
-      - DEBUG=True
-      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@staging.pyladiesseoul.org}
-      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-staging_admin_password}
     networks:
       - frontend
     deploy:
